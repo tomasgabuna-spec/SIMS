@@ -149,15 +149,17 @@ function createGrid() {
     }
   }
 
-  // Add X-axis label
+  // Add X-axis label (now positioned on the left, like the Y-axis was)
   const xLabel = document.createElement("div");
-  xLabel.className = "axis-label x-label";
+  xLabel.className = "axis-label y-label";
+  xLabel.style.color = "var(--primary)";
   xLabel.innerHTML = "X-AXIS <span>(MINUEND)</span>";
   grid.appendChild(xLabel);
 
-  // Add Y-axis label
+  // Add Y-axis label (now positioned at the bottom, like the X-axis was)
   const yLabel = document.createElement("div");
-  yLabel.className = "axis-label y-label";
+  yLabel.className = "axis-label x-label";
+  yLabel.style.color = "var(--secondary)";
   yLabel.innerHTML = "Y-AXIS <span>(SUBTRAHEND)</span>";
   grid.appendChild(yLabel);
 
