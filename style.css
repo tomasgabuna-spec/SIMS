@@ -1,0 +1,608 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary: #6c3df4;
+  --secondary: #16b8a6;
+  --dark: #172033;
+  --light: #f5f7fb;
+  --white: #fff;
+  --danger: #e74c3c;
+  --success: #20a56b;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--light);
+  color: var(--dark);
+  min-height: 100vh;
+}
+
+.topbar {
+  height: 70px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  box-shadow: 0 2px 12px #0001;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.brand small {
+  color: #777;
+}
+
+.menu-btn,
+.home-btn {
+  border: 0;
+  background: transparent;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+#sidebar {
+  position: fixed;
+  top: 70px;
+  left: -250px;
+  width: 240px;
+  height: calc(100vh - 70px);
+  background: var(--dark);
+  padding: 20px;
+  z-index: 15;
+  transition: .3s;
+}
+
+#sidebar.open {
+  left: 0;
+}
+
+#sidebar button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 8px;
+  background: transparent;
+  border: 0;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+#sidebar button:hover {
+  background: #ffffff18;
+}
+
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px 20px 80px;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--white);
+  border-radius: 25px;
+  margin-bottom: 25px;
+}
+
+.badge {
+  display: inline-block;
+  background: #eee8ff;
+  color: var(--primary);
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 7vw, 70px);
+  margin: 18px 0 10px;
+}
+
+.hero h1 span {
+  color: var(--primary);
+}
+
+.hero p {
+  color: #697386;
+  margin-bottom: 25px;
+}
+
+button {
+  font-family: inherit;
+}
+
+.primary,
+.secondary {
+  border: 0;
+  padding: 13px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 5px;
+}
+
+.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.secondary {
+  background: #e9edf5;
+  color: var(--dark);
+}
+
+.primary:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.cards article {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.cards article:hover {
+  transform: translateY(-4px);
+}
+
+.cards article div {
+  font-size: 30px;
+  margin-bottom: 15px;
+}
+
+.cards p {
+  color: #70798a;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.section-title {
+  margin-bottom: 25px;
+}
+
+.lesson {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.lesson-card,
+.teacher-card,
+.achievement {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 15px;
+}
+
+.lesson-card h3 {
+  margin-bottom: 12px;
+}
+
+.lesson-card p {
+  color: #667085;
+  line-height: 1.6;
+}
+
+.example {
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--primary);
+  margin: 15px 0;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+}
+
+.stats span {
+  background: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+#timerStat {
+  background: var(--dark) !important;
+  color: white;
+  font-weight: bold;
+}
+
+#timerStat.time-low {
+  background: var(--danger) !important;
+  animation: pulse 0.8s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.problem-box {
+  background: var(--dark);
+  color: white;
+  padding: 25px;
+  border-radius: 18px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.problem-box h1 {
+  font-size: clamp(32px, 7vw, 55px);
+  margin: 10px;
+}
+
+.problem-box p {
+  color: #ccd3df;
+}
+
+.grid-wrapper {
+  background: white;
+  border-radius: 18px;
+  padding: 15px;
+  overflow: auto;
+}
+
+.sims-grid {
+  display: grid;
+  grid-template-columns: repeat(21, 1fr);
+  min-width: 600px;
+  aspect-ratio: 1;
+  max-width: 700px;
+  margin: auto;
+  border: 2px solid #bbb;
+  background: #fafbff;
+}
+
+.cell {
+  border: 1px solid #e1e5ee;
+  min-width: 25px;
+  min-height: 25px;
+  cursor: pointer;
+  position: relative;
+}
+
+.cell:hover {
+  background: #e9e2ff;
+}
+
+.cell.axis-x {
+  background: #f3edff;
+}
+
+.cell.axis-y {
+  background: #eafbf8;
+}
+
+.cell.selected {
+  background: var(--primary) !important;
+  box-shadow: inset 0 0 0 3px white;
+}
+
+.cell.correct {
+  background: var(--success) !important;
+}
+
+.selection {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+#selectedText {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.feedback {
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.feedback.correct {
+  background: #e4f8ee;
+  color: var(--success);
+}
+
+.feedback.wrong {
+  background: #fff0ee;
+  color: var(--danger);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.explanation {
+  background: white;
+  margin-top: 15px;
+  padding: 20px;
+  border-radius: 18px;
+}
+
+.explanation label {
+  display: block;
+  margin: 12px 0;
+}
+
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+}
+
+.stat-card span {
+  display: block;
+  color: #777;
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 35px;
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+.teacher-card {
+  max-width: 600px;
+}
+
+.teacher-card label {
+  display: block;
+  margin: 15px 0 7px;
+  font-weight: bold;
+}
+
+.teacher-card select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+footer {
+  background: var(--dark);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+}
+
+/* MOBILE */
+@media (max-width: 800px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lesson {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .topbar {
+    padding: 0 15px;
+  }
+
+  .brand small {
+    display: none;
+  }
+
+  main {
+    padding: 20px 12px 60px;
+  }
+
+  .hero {
+    padding: 40px 15px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .game-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stats span {
+    font-size: 13px;
+  }
+
+  .progress-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .problem-box {
+    padding: 20px 10px;
+  }
+
+  .sims-grid {
+    min-width: 500px;
+  }
+}
+/* ================================
+   CARTESIAN PLANE LABELS
+================================ */
+
+.grid-wrapper {
+  position: relative;
+}
+
+.sims-grid {
+  position: relative;
+  overflow: visible;
+}
+
+/* X-axis */
+.cell.axis-x {
+  background: #eee8ff;
+  border-top: 3px solid var(--primary);
+  border-bottom: 3px solid var(--primary);
+}
+
+/* Y-axis */
+.cell.axis-y {
+  background: #e5f9f6;
+  border-left: 3px solid var(--secondary);
+  border-right: 3px solid var(--secondary);
+}
+
+/* Origin */
+.cell.origin {
+  background: var(--primary) !important;
+  color: white;
+  font-weight: bold;
+  z-index: 3;
+}
+
+.axis-number {
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Axis labels */
+.axis-label {
+  position: absolute;
+  font-weight: 900;
+  font-size: 14px;
+  z-index: 10;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.axis-label span {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* X-axis label */
+.x-label {
+  left: 50%;
+  bottom: -45px;
+  transform: translateX(-50%);
+  color: var(--primary);
+}
+
+/* Y-axis label */
+.y-label {
+  left: -115px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  color: var(--secondary);
+}
+
+/* Origin label */
+.origin-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 18px);
+  font-size: 9px;
+  font-weight: bold;
+  color: white;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Arrow effect on axes */
+.cell.axis-x:first-of-type {
+  border-top: 3px solid var(--primary);
+}
+
+@media (max-width: 550px) {
+
+  .axis-label {
+    font-size: 11px;
+  }
+
+  .axis-label span {
+    font-size: 9px;
+  }
+
+  .x-label {
+    bottom: -38px;
+  }
+
+  .y-label {
+    left: -90px;
+  }
+
+  .axis-number {
+    font-size: 8px;
+  }
+
+  .origin-label {
+    font-size: 7px;
+  }
+}

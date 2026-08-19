@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMS — Subtracting Integer Mapping System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div class="brand">
+    <span class="logo">SIMS</span>
+    <small>Subtracting Integer Mapping System</small>
+  </div>
+  <button class="home-btn" onclick="showHome()">⌂</button>
+</header>
+
+<nav id="sidebar">
+  <button onclick="showHome()">🏠 Home</button>
+  <button onclick="showLearn()">📘 Learn SIMS</button>
+  <button onclick="startGame('beginner')">🎮 Practice</button>
+  <button onclick="startGame('beginner')">🎯 Spot the Difference</button>
+  <button onclick="startTimeTrial()">⏱️ Time Trial</button>
+  <button onclick="showTeacher()">👩‍🏫 Teacher Mode</button>
+  <button onclick="showProgress()">📊 Progress</button>
+</nav>
+
+<main id="app">
+
+  <section id="home" class="screen active">
+    <div class="hero">
+      <span class="badge">MATHEMATICS LEARNING GAME</span>
+      <h1>Welcome to <span>SIMS!</span></h1>
+      <p>Map it. Subtract it. Explain it. Master it.</p>
+      <button class="primary" onclick="startGame('beginner')">
+        ▶ Start Game
+      </button>
+    </div>
+
+    <div class="cards">
+      <article onclick="showLearn()">
+        <div>📘</div>
+        <h3>Learn SIMS</h3>
+        <p>Understand the coordinate system.</p>
+      </article>
+
+      <article onclick="startGame('beginner')">
+        <div>🎯</div>
+        <h3>Spot the Difference</h3>
+        <p>Find the correct coordinate.</p>
+      </article>
+
+      <article onclick="startTimeTrial()">
+        <div>⏱️</div>
+        <h3>Time Trial</h3>
+        <p>Solve problems before time runs out.</p>
+      </article>
+
+      <article onclick="showProgress()">
+        <div>🏆</div>
+        <h3>My Progress</h3>
+        <p>View your performance and achievements.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="learn" class="screen">
+    <div class="section-title">
+      <h2>📘 Learn SIMS</h2>
+      <p>Learn how integer subtraction works on the SIMS grid.</p>
+    </div>
+
+    <div class="lesson">
+      <div class="lesson-card">
+        <h3>What is SIMS?</h3>
+        <p>SIMS is a modified Cartesian coordinate system used to represent integer subtraction.</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>Understand the Axes</h3>
+        <p><strong>X-axis → Minuend</strong></p>
+        <p><strong>Y-axis → Subtrahend</strong></p>
+        <p><strong>Coordinate → Difference</strong></p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>Example</h3>
+        <div class="example">5 − 3 = 2</div>
+        <p>Find 5 on the X-axis and 3 on the Y-axis. Their coordinate is (5, 3).</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>Negative Integers</h3>
+        <div class="example">7 − (−3) = 10</div>
+        <p>Locate 7 on X and −3 on Y, then apply the subtraction rule.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="game" class="screen">
+    <div class="game-header">
+      <div>
+        <span class="badge" id="levelBadge">BEGINNER</span>
+        <h2>🎯 Spot the Difference</h2>
+      </div>
+
+      <div class="stats">
+        <span id="timerStat" class="hidden">⏱️ <b id="timeLeft">60</b>s</span>
+        <span>⭐ <b id="score">0</b></span>
+        <span>🔥 <b id="streak">0</b></span>
+        <span>✓ <b id="correct">0</b></span>
+      </div>
+    </div>
+
+    <div class="problem-box">
+      <small>PROBLEM</small>
+      <h1 id="problem">5 − 3 = ?</h1>
+      <p>Find the correct coordinate on the SIMS grid.</p>
+    </div>
+
+    <div class="grid-wrapper">
+      <div id="grid" class="sims-grid"></div>
+    </div>
+
+    <div class="selection">
+      <p id="selectedText">Selected Coordinate: —</p>
+      <button class="primary" id="submitBtn" onclick="submitAnswer()" disabled>
+        SUBMIT ANSWER
+      </button>
+      <button class="secondary" onclick="showHint()">💡 SHOW HINT</button>
+    </div>
+
+    <div id="feedback" class="feedback hidden"></div>
+
+    <div id="explanation" class="explanation hidden">
+      <h3>Why is this the answer?</h3>
+      <label><input type="checkbox"> I located the minuend on the X-axis.</label>
+      <label><input type="checkbox"> I located the subtrahend on the Y-axis.</label>
+      <label><input type="checkbox"> I found their intersection.</label>
+      <label><input type="checkbox"> I applied the subtraction rule.</label>
+      <button class="primary" onclick="nextQuestion()">NEXT QUESTION →</button>
+    </div>
+
+    <div id="timeTrialResults" class="explanation hidden">
+      <h3>⏱️ TIME'S UP!</h3>
+      <p>Coordinates solved: <strong id="ttSolved">0</strong></p>
+      <p>Final Score: <strong id="ttScore">0</strong></p>
+      <p>Best Time Trial Score: <strong id="ttBest">0</strong></p>
+      <button class="primary" onclick="startTimeTrial()">🔁 PLAY AGAIN</button>
+      <button class="secondary" onclick="showHome()">⌂ HOME</button>
+    </div>
+  </section>
+
+  <section id="progress" class="screen">
+    <div class="section-title">
+      <h2>📊 My Progress</h2>
+    </div>
+
+    <div class="progress-grid">
+      <div class="stat-card">
+        <span>Accuracy</span>
+        <strong id="accuracy">0%</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Questions</span>
+        <strong id="questions">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Correct</span>
+        <strong id="totalCorrect">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Best Streak</span>
+        <strong id="bestStreak">0</strong>
+      </div>
+    </div>
+
+    <div class="achievement">
+      <h3>🏆 Achievements</h3>
+      <p id="achievementText">Solve your first SIMS problem to unlock an achievement.</p>
+    </div>
+  </section>
+
+  <section id="teacher" class="screen">
+    <div class="section-title">
+      <h2>👩‍🏫 Teacher Mode</h2>
+      <p>Create a classroom activity.</p>
+    </div>
+
+    <div class="teacher-card">
+      <label>Difficulty</label>
+      <select id="teacherDifficulty">
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+
+      <label>Number of Questions</label>
+      <select>
+        <option>5</option>
+        <option>10</option>
+        <option>20</option>
+      </select>
+
+      <label>Time Limit</label>
+      <select>
+        <option>None</option>
+        <option>30 seconds</option>
+        <option>60 seconds</option>
+        <option>120 seconds</option>
+      </select>
+
+      <button class="primary" onclick="teacherStart()">START CLASS ACTIVITY</button>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SIMS</strong> — Map It. Subtract It. Explain It. Master It.
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
