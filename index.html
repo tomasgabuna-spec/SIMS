@@ -141,10 +141,15 @@
       <label><input type="checkbox"> I found their intersection.</label>
 
       <p class="explanation-subtitle">Which rule did I apply?</p>
-      <label><input type="checkbox"> <strong>Positive − Positive:</strong> I changed it to Positive + Negative, then subtracted and kept the sign of the number with the greater absolute value.</label>
-      <label><input type="checkbox"> <strong>Positive − Negative:</strong> I changed it to Positive + Positive, then added the two numbers (the sum stays positive).</label>
-      <label><input type="checkbox"> <strong>Negative − Positive:</strong> I changed it to Negative + Negative, then added the two numbers (the sum stays negative).</label>
-      <label><input type="checkbox"> <strong>Negative − Negative:</strong> I changed it to Negative + Positive, then subtracted and kept the sign of the number with the greater absolute value.</label>
+      <label id="reasonRowPP"><input type="checkbox" id="reasonPP"> <strong>Positive − Positive:</strong> I changed it to Positive + Negative, then subtracted and kept the sign of the number with the greater absolute value.</label>
+      <label id="reasonRowPN"><input type="checkbox" id="reasonPN"> <strong>Positive − Negative:</strong> I changed it to Positive + Positive, then added the two numbers (the sum stays positive).</label>
+      <label id="reasonRowNP"><input type="checkbox" id="reasonNP"> <strong>Negative − Positive:</strong> I changed it to Negative + Negative, then added the two numbers (the sum stays negative).</label>
+      <label id="reasonRowNN"><input type="checkbox" id="reasonNN"> <strong>Negative − Negative:</strong> I changed it to Negative + Positive, then subtracted and kept the sign of the number with the greater absolute value.</label>
+
+      <p id="reasonWarning" class="reason-warning hidden">
+        ⚠ That's not the rule that applies to this problem. Uncheck it and
+        select the correct one before continuing.
+      </p>
 
       <button class="primary" onclick="nextQuestion()">NEXT QUESTION →</button>
     </div>

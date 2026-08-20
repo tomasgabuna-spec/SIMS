@@ -87,6 +87,11 @@ function generateProblem() {
   document.querySelectorAll("#explanation input[type=checkbox]")
     .forEach(cb => cb.checked = false);
 
+  document.getElementById("reasonWarning").classList.add("hidden");
+
+  document.querySelectorAll(".reason-flagged")
+    .forEach(el => el.classList.remove("reason-flagged"));
+
   createGrid();
 }
 
@@ -328,7 +333,36 @@ function showHint() {
   `;
 }
 
+function getCorrectReasonId() {
+  if (minuend >= 0 && subtrahend >= 0) return "reasonPP";
+  if (minuend >= 0 && subtrahend < 0) return "reasonPN";
+  if (minuend < 0 && subtrahend >= 0) return "reasonNP";
+  return "reasonNN";
+}
+
 function nextQuestion() {
+  const reasonIds = ["reasonPP", "reasonPN", "reasonNP", "reasonNN"];
+  const correctId = getCorrectReasonId();
+  const warning = document.getElementById("reasonWarning");
+
+  document.querySelectorAll(".reason-flagged")
+    .forEach(el => el.classList.remove("reason-flagged"));
+
+  const wrongIds = reasonIds.filter(id =>
+    id !== correctId && document.getElementById(id).checked
+  );
+
+  if (wrongIds.length > 0) {
+    wrongIds.forEach(id => {
+      document.getElementById("reasonRow" + id.slice(6))
+        .classList.add("reason-flagged");
+    });
+
+    warning.classList.remove("hidden");
+    return;
+  }
+
+  warning.classList.add("hidden");
   generateProblem();
 }
 

@@ -383,6 +383,23 @@ button {
   color: var(--primary);
 }
 
+.reason-warning {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fdecea;
+  border: 1px solid #f5b5ac;
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.reason-flagged {
+  background: #fdecea;
+  border-radius: 10px;
+  outline: 2px solid #e5534b;
+  padding-left: 6px;
+}
+
 .progress-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
