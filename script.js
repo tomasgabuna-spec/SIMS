@@ -358,6 +358,18 @@ function nextQuestion() {
         .classList.add("reason-flagged");
     });
 
+    warning.textContent =
+      "⚠ That's not the rule that applies to this problem. Uncheck it and select the correct one before continuing.";
+    warning.classList.remove("hidden");
+    return;
+  }
+
+  if (!document.getElementById(correctId).checked) {
+    document.getElementById("reasonRow" + correctId.slice(6))
+      .classList.add("reason-flagged");
+
+    warning.textContent =
+      "⚠ Check the rule you applied for this problem before continuing.";
     warning.classList.remove("hidden");
     return;
   }
