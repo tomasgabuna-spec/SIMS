@@ -84,6 +84,9 @@ function generateProblem() {
   document.getElementById("feedback").className = "feedback hidden";
   document.getElementById("explanation").classList.add("hidden");
 
+  document.querySelectorAll("#explanation input[type=checkbox]")
+    .forEach(cb => cb.checked = false);
+
   createGrid();
 }
 

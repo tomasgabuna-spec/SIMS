@@ -375,6 +375,14 @@ button {
   margin: 12px 0;
 }
 
+.explanation-subtitle {
+  margin: 18px 0 4px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+  font-weight: 700;
+  color: var(--primary);
+}
+
 .progress-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
