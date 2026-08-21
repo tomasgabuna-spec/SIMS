@@ -3,6 +3,40 @@ let minuend = 5;
 let subtrahend = 3;
 let selected = null;
 
+// --- WORD PROBLEMS MODE ---
+let isWordProblem = false;
+
+const wordProblemTemplates = [
+  (m, s) => `The temperature was ${formatNumber(m)}°F in the morning and ${formatNumber(s)}°F in the evening. What is the difference between the morning and evening temperatures?`,
+  (m, s) => `A submarine is at a depth of ${formatNumber(m)} meters relative to sea level, and a drone is flying at ${formatNumber(s)} meters relative to sea level. What is the difference in their heights?`,
+  (m, s) => `Account A has a balance of $${formatNumber(m)}, and Account B has a balance of $${formatNumber(s)}. What is the difference between the two balances?`,
+  (m, s) => `On one play, a football team's yard line marker moved to the ${formatNumber(m)} yard line, and on the next play it moved to the ${formatNumber(s)} yard line. What is the difference between the two positions?`,
+  (m, s) => `A golfer's score relative to par was ${formatNumber(m)} on the first hole and ${formatNumber(s)} on the second hole. What is the difference between the two scores?`,
+  (m, s) => `A hiker's elevation changed to ${formatNumber(m)} meters relative to base camp, then later to ${formatNumber(s)} meters relative to base camp. What is the difference between the two elevations?`,
+  (m, s) => `A company's profit was ${formatNumber(m)} thousand dollars in one quarter and ${formatNumber(s)} thousand dollars in the next quarter. What is the difference between the two quarters' profits?`,
+  (m, s) => `An elevator stopped at floor ${formatNumber(m)} and later at floor ${formatNumber(s)} (basement floors are negative). What is the difference between the two floors?`,
+];
+
+let wordProblemQueue = [];
+
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function generateWordProblemText(m, s) {
+  if (wordProblemQueue.length === 0) {
+    wordProblemQueue = shuffleArray(wordProblemTemplates);
+  }
+
+  const template = wordProblemQueue.pop();
+  return template(m, s);
+}
+
 // --- TIME TRIAL MODE ---
 let isTimeTrial = false;
 let timeTrialDuration = 60;   // seconds per round
@@ -71,8 +105,21 @@ function generateProblem() {
     subtrahend = generateNumber(-10, 10);
   }
 
-  document.getElementById("problem").textContent =
-    `${formatNumber(minuend)} − (${formatNumber(subtrahend)}) = ?`;
+  if (isWordProblem) {
+    document.getElementById("problemLabel").textContent = "WORD PROBLEM";
+    document.getElementById("problem").textContent =
+      generateWordProblemText(minuend, subtrahend);
+    document.getElementById("problem").classList.add("word-problem-text");
+    document.getElementById("problemSubtext").textContent =
+      "Figure out the two quantities, then select their coordinate on the SIMS grid.";
+  } else {
+    document.getElementById("problemLabel").textContent = "PROBLEM";
+    document.getElementById("problem").textContent =
+      `${formatNumber(minuend)} − (${formatNumber(subtrahend)}) = ?`;
+    document.getElementById("problem").classList.remove("word-problem-text");
+    document.getElementById("problemSubtext").textContent =
+      "Find the correct coordinate on the SIMS grid.";
+  }
 
   selected = null;
 
@@ -187,6 +234,7 @@ function createGrid() {
 
 function startGame(level = "beginner") {
   isTimeTrial = false;
+  isWordProblem = false;
   stopTimer();
 
   currentDifficulty = level;
@@ -201,8 +249,27 @@ function startGame(level = "beginner") {
   generateProblem();
 }
 
+function startWordProblems(level = "beginner") {
+  isTimeTrial = false;
+  isWordProblem = true;
+  stopTimer();
+
+  wordProblemQueue = [];
+
+  currentDifficulty = level;
+
+  document.getElementById("levelBadge").textContent = "WORD PROBLEM";
+
+  document.getElementById("timerStat").classList.add("hidden");
+  document.getElementById("timeTrialResults").classList.add("hidden");
+
+  showScreen("game");
+  generateProblem();
+}
+
 function startTimeTrial() {
   isTimeTrial = true;
+  isWordProblem = false;
   currentDifficulty = "intermediate";
   timeTrialScore = 0;
   timeTrialSolved = 0;
@@ -331,7 +398,12 @@ function showHint() {
   const feedback = document.getElementById("feedback");
 
   feedback.className = "feedback";
-  feedback.innerHTML = `
+  feedback.innerHTML = isWordProblem ? `
+    💡 Hint: This scenario means
+    <strong>${formatNumber(minuend)} − (${formatNumber(subtrahend)})</strong>.
+    Find <strong>${formatNumber(minuend)}</strong> on the X-axis and
+    <strong>${formatNumber(subtrahend)}</strong> on the Y-axis.
+  ` : `
     💡 Hint: Find <strong>${formatNumber(minuend)}</strong>
     on the X-axis and
     <strong>${formatNumber(subtrahend)}</strong>
@@ -447,8 +519,14 @@ function saveData() {
 function teacherStart() {
   const level =
     document.getElementById("teacherDifficulty").value;
+  const mode =
+    document.getElementById("teacherMode").value;
 
-  startGame(level);
+  if (mode === "word") {
+    startWordProblems(level);
+  } else {
+    startGame(level);
+  }
 }
 
 updateStats();

@@ -277,6 +277,13 @@ button {
   margin: 10px;
 }
 
+.problem-box h1.word-problem-text {
+  font-size: clamp(18px, 3.4vw, 26px);
+  line-height: 1.5;
+  font-weight: 600;
+  text-align: left;
+}
+
 .problem-box p {
   color: #ccd3df;
 }

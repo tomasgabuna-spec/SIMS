@@ -22,6 +22,7 @@
   <button onclick="showLearn()">📘 Learn SIMS</button>
   <button onclick="startGame('beginner')">🎮 Practice</button>
   <button onclick="startGame('beginner')">🎯 Spot the Difference</button>
+  <button onclick="startWordProblems('beginner')">📝 Word Problems</button>
   <button onclick="startTimeTrial()">⏱️ Time Trial</button>
   <button onclick="showTeacher()">👩‍🏫 Teacher Mode</button>
   <button onclick="showProgress()">📊 Progress</button>
@@ -50,6 +51,12 @@
         <div>🎯</div>
         <h3>Spot the Difference</h3>
         <p>Find the correct coordinate.</p>
+      </article>
+
+      <article onclick="startWordProblems('beginner')">
+        <div>📝</div>
+        <h3>Word Problems</h3>
+        <p>Solve real-life scenarios with SIMS.</p>
       </article>
 
       <article onclick="startTimeTrial()">
@@ -115,9 +122,9 @@
     </div>
 
     <div class="problem-box">
-      <small>PROBLEM</small>
+      <small id="problemLabel">PROBLEM</small>
       <h1 id="problem">5 − 3 = ?</h1>
-      <p>Find the correct coordinate on the SIMS grid.</p>
+      <p id="problemSubtext">Find the correct coordinate on the SIMS grid.</p>
     </div>
 
     <div class="grid-wrapper">
@@ -208,6 +215,12 @@
     </div>
 
     <div class="teacher-card">
+      <label>Mode</label>
+      <select id="teacherMode">
+        <option value="numeric">Spot the Difference (equations)</option>
+        <option value="word">Word Problems (real-life scenarios)</option>
+      </select>
+
       <label>Difficulty</label>
       <select id="teacherDifficulty">
         <option value="beginner">Beginner</option>
