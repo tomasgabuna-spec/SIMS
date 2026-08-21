@@ -718,6 +718,9 @@ function submitAnswer() {
         missionProgress[w.id] = already + 1;
       }
 
+      // When the current world reaches its target, unlock the next world
+      // and automatically move the student there instead of generating
+      // another question from the same world.
       if (
         missionProgress[w.id] >= w.target &&
         worldIndex === missionUnlockedIndex &&
@@ -725,14 +728,33 @@ function submitAnswer() {
       ) {
         missionUnlockedIndex = worldIndex + 1;
         const nextWorld = WORLDS[missionUnlockedIndex];
-        missionMessage = `<p>🎉 ${w.name} cleared! ${nextWorld.icon} ${nextWorld.name} is now unlocked.</p>`;
+        missionMessage = `<p>🎉 ${w.name} cleared! ${nextWorld.icon} ${nextWorld.name} is now unlocked.</p>
+          <p>➡️ Moving to ${nextWorld.name}...</p>`;
+
+        saveMissionData();
+
+        // Stop the current question flow and enter the newly unlocked world.
+        document.getElementById("submitBtn").disabled = true;
+        setTimeout(() => {
+          if (isMission && currentWorld === w.id) {
+            startMission(nextWorld.id);
+          }
+        }, 1200);
       } else if (missionProgress[w.id] >= w.target) {
-        missionMessage = `<p>⭐ ${w.name} mastered!</p>`;
+        // Final world completed.
+        missionMessage = `<p>🏆 ${w.name} mastered! You completed all mission worlds!</p>`;
+        saveMissionData();
+
+        document.getElementById("submitBtn").disabled = true;
+        setTimeout(() => {
+          if (isMission && currentWorld === w.id) {
+            showMissions();
+          }
+        }, 1500);
       } else {
         missionMessage = `<p>⭐ ${w.name} progress: ${missionProgress[w.id]} / ${w.target}</p>`;
+        saveMissionData();
       }
-
-      saveMissionData();
     }
 
     feedback.className = "feedback correct";
