@@ -136,7 +136,12 @@ function createGrid() {
         cell.innerHTML = `<span class="axis-number">${y}</span>`;
       }
 
-      cell.title = `Coordinate (${x}, ${y})`;
+      // Difference label (x - y) shown in every non-axis cell
+      if (x !== 0 && y !== 0) {
+        cell.innerHTML = `<span class="diff-number">${x - y}</span>`;
+      }
+
+      cell.title = `Coordinate (${x}, ${y}) → Difference: ${x - y}`;
 
       cell.addEventListener("click", () => {
         document.querySelectorAll(".cell").forEach(c =>
