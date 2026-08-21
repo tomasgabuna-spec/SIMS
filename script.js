@@ -12,6 +12,18 @@ function describeVehicleAltitude(n) {
   return `a boat sailing right at sea level (0 meters)`;
 }
 
+function describeElevationRelative(n) {
+  if (n > 0) return `${n} meters above base camp`;
+  if (n < 0) return `${Math.abs(n)} meters below base camp`;
+  return `right at base camp (0 meters)`;
+}
+
+function describeFloor(n) {
+  if (n > 0) return `Floor ${n}`;
+  if (n < 0) return `Basement Level ${Math.abs(n)} (B${Math.abs(n)})`;
+  return `the Ground Floor`;
+}
+
 function describeScoreChange(n) {
   if (n > 0) return `scored ${n} points more than the other team`;
   if (n < 0) return `scored ${Math.abs(n)} points fewer than the other team`;
@@ -24,9 +36,9 @@ const wordProblemTemplates = [
   (m, s) => `Juan's e-wallet has a balance of ₱${formatNumber(m)}, and Maria's e-wallet has a balance of ₱${formatNumber(s)}. What is the difference between the two balances?`,
   (m, s) => `In the first quarter of a UAAP basketball game, Team A ${describeScoreChange(m)}. In the second quarter, Team A ${describeScoreChange(s)}. What is the difference between the two quarters?`,
   (m, s) => `A golfer playing in Tagaytay had a score relative to par of ${formatNumber(m)} on the first hole and ${formatNumber(s)} on the second hole. What is the difference between the two scores?`,
-  (m, s) => `A hiker climbing Mt. Pulag was at an elevation of ${formatNumber(m)} meters relative to base camp, then later at ${formatNumber(s)} meters relative to base camp. What is the difference between the two elevations?`,
+  (m, s) => `A hiker climbing Mt. Pulag was at an elevation of ${describeElevationRelative(m)}, then later at ${describeElevationRelative(s)}. What is the difference between the two elevations?`,
   (m, s) => `A sari-sari store's profit was ₱${formatNumber(m)} thousand in one month and ₱${formatNumber(s)} thousand the next month. What is the difference between the two months' profits?`,
-  (m, s) => `An elevator in a Cebu mall stopped at floor ${formatNumber(m)} and later at floor ${formatNumber(s)} (basement floors are negative). What is the difference between the two floors?`,
+  (m, s) => `An elevator in a Cebu mall stopped at ${describeFloor(m)} and later at ${describeFloor(s)}. What is the difference between the two floors?`,
 ];
 
 let wordProblemQueue = [];
