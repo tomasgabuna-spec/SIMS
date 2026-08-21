@@ -6,39 +6,31 @@ let selected = null;
 // --- WORD PROBLEMS MODE ---
 let isWordProblem = false;
 
-function describeVehicleAltitude(n) {
-  if (n > 0) return `a drone flying ${n} meters above sea level`;
-  if (n < 0) return `a submarine at a depth of ${Math.abs(n)} meters below sea level`;
-  return `a boat sailing right at sea level (0 meters)`;
-}
-
-function describeElevationRelative(n) {
-  if (n > 0) return `${n} meters above base camp`;
-  if (n < 0) return `${Math.abs(n)} meters below base camp`;
-  return `right at base camp (0 meters)`;
-}
-
-function describeFloor(n) {
-  if (n > 0) return `Floor ${n}`;
-  if (n < 0) return `Basement Level ${Math.abs(n)} (B${Math.abs(n)})`;
-  return `the Ground Floor`;
-}
-
-function describeScoreChange(n) {
-  if (n > 0) return `scored ${n} points more than the other team`;
-  if (n < 0) return `scored ${Math.abs(n)} points fewer than the other team`;
-  return `tied the other team (0 point difference)`;
-}
-
-const wordProblemTemplates = [
-  (m, s) => `The temperature in Baguio City was ${formatNumber(m)}°C in the morning, and in Manila it was ${formatNumber(s)}°C in the afternoon. What is the difference between the two temperatures?`,
-  (m, s) => `The first vehicle is ${describeVehicleAltitude(m)} near Palawan. The second vehicle is ${describeVehicleAltitude(s)} near Batangas. What is the difference in their heights?`,
-  (m, s) => `Juan's e-wallet has a balance of ₱${formatNumber(m)}, and Maria's e-wallet has a balance of ₱${formatNumber(s)}. What is the difference between the two balances?`,
-  (m, s) => `In the first quarter of a UAAP basketball game, Team A ${describeScoreChange(m)}. In the second quarter, Team A ${describeScoreChange(s)}. What is the difference between the two quarters?`,
-  (m, s) => `A golfer playing in Tagaytay had a score relative to par of ${formatNumber(m)} on the first hole and ${formatNumber(s)} on the second hole. What is the difference between the two scores?`,
-  (m, s) => `A hiker climbing Mt. Pulag was at an elevation of ${describeElevationRelative(m)}, then later at ${describeElevationRelative(s)}. What is the difference between the two elevations?`,
-  (m, s) => `A sari-sari store's profit was ₱${formatNumber(m)} thousand in one month and ₱${formatNumber(s)} thousand the next month. What is the difference between the two months' profits?`,
-  (m, s) => `An elevator in a Cebu mall stopped at ${describeFloor(m)} and later at ${describeFloor(s)}. What is the difference between the two floors?`,
+// Fixed set of Philippine integer-subtraction word problems.
+// Each entry's m (minuend) and s (subtrahend) match the intended
+// answer: difference = m - s, plotted as coordinate (m, s) on the grid.
+const wordProblems = [
+  { text: "At a weather station in Baguio City, the temperature was 7°C in the afternoon and 3°C at night. What was the change in temperature from afternoon to night?", m: 3, s: 7 },
+  { text: "A diver near Batangas was 2 m below sea level, then descended until the diver was 6 m below sea level. What was the change in elevation?", m: -6, s: -2 },
+  { text: "Liza had ₱8 in her e-wallet, then paid ₱5 for a printing fee. What was her new balance?", m: 8, s: 5 },
+  { text: "At dawn in Benguet, the temperature was -2°C. By noon, it was 5°C. How many degrees warmer was noon than dawn?", m: 5, s: -2 },
+  { text: "An elevator in a Manila building started 3 floors below ground level and stopped 1 floor below ground level. What was the change in floor position?", m: -1, s: -3 },
+  { text: "A hiker on Mount Apo was at an elevation 4 m above a reference point, then went down to 1 m above that point. What was the change in elevation?", m: 1, s: 4 },
+  { text: "A sari-sari store recorded a ₱3 loss on Monday and a ₱2 gain on Tuesday. How much greater was Tuesday's result than Monday's?", m: 2, s: -3 },
+  { text: "The temperature inside a cold-storage room in Davao was -6°C. It rose to -1°C. By how many degrees did it rise?", m: -1, s: -6 },
+  { text: "A fisherman in Palawan marked sea level as 0. A sinker was 5 m below sea level and was pulled up until it was 2 m below sea level. What was the change in elevation?", m: -2, s: -5 },
+  { text: "Carlo's jeepney fare card had ₱9. He spent ₱7. How much remained?", m: 9, s: 7 },
+  { text: "At a science exhibit in Quezon City, a thermometer read 4°C, then read -3°C. What was the change in temperature?", m: -3, s: 4 },
+  { text: "A point on a rice-terrace model is 6 m above a reference line. Another point is 2 m above the same line. How much lower is the second point?", m: 2, s: 6 },
+  { text: "Mia's class-fund balance changed from -₱4 to -₱1 after she paid part of what she owed. What was the change in her balance?", m: -1, s: -4 },
+  { text: "A submarine model was at 1 m below the waterline, then moved to 7 m below the waterline. What was its change in elevation?", m: -7, s: -1 },
+  { text: "A delivery rider was 2 km east of the barangay hall and later was 5 km east of it. How much farther east was the rider?", m: 5, s: 2 },
+  { text: "In Sagada, the morning temperature was -4°C. It increased by 7°C in the afternoon. What was the afternoon temperature, and what subtraction sentence verifies the increase?", m: 3, s: -4 },
+  { text: "A diver in Cebu started 3 m below sea level and ended 8 m below sea level. The dive computer shows final elevation minus starting elevation. What value should it display?", m: -8, s: -3 },
+  { text: "A student's canteen account was -₱3. After a parent added ₱8, what was the new balance?", m: 5, s: -3 },
+  { text: "A tide marker in Iloilo showed 2 m above the reference level in the morning and 4 m below it in the evening. What was the change in level?", m: -4, s: 2 },
+  { text: "A courier traveled 8 km north from a depot, then returned until only 3 km separated the courier from the depot. How much of the northward distance was reduced?", m: 8, s: 3 },
+  { text: "A vendor's daily result was a ₱2 gain on Saturday and a ₱5 loss on Sunday. By how much did the result change from Saturday to Sunday?", m: -5, s: 2 },
 ];
 
 let wordProblemQueue = [];
@@ -52,13 +44,11 @@ function shuffleArray(arr) {
   return copy;
 }
 
-function generateWordProblemText(m, s) {
+function getNextWordProblem() {
   if (wordProblemQueue.length === 0) {
-    wordProblemQueue = shuffleArray(wordProblemTemplates);
+    wordProblemQueue = shuffleArray(wordProblems);
   }
-
-  const template = wordProblemQueue.pop();
-  return template(m, s);
+  return wordProblemQueue.pop();
 }
 
 // --- TIME TRIAL MODE ---
@@ -76,6 +66,10 @@ let correct = Number(localStorage.getItem("simsCorrect")) || 0;
 let questions = Number(localStorage.getItem("simsQuestions")) || 0;
 let streak = Number(localStorage.getItem("simsStreak")) || 0;
 let bestStreak = Number(localStorage.getItem("simsBest")) || 0;
+
+// --- ACHIEVEMENT TRACKING ---
+let advancedCorrect = Number(localStorage.getItem("simsAdvancedCorrect")) || 0;
+let negativeCorrect = Number(localStorage.getItem("simsNegativeCorrect")) || 0;
 
 const range = 10;
 
@@ -114,29 +108,32 @@ function generateNumber(min, max) {
 }
 
 function generateProblem() {
-  if (currentDifficulty === "beginner") {
-    minuend = generateNumber(1, 9);
-    subtrahend = generateNumber(1, minuend);
-  }
-
-  if (currentDifficulty === "intermediate") {
-    minuend = generateNumber(-8, 8);
-    subtrahend = generateNumber(-8, 8);
-  }
-
-  if (currentDifficulty === "advanced") {
-    minuend = generateNumber(-10, 10);
-    subtrahend = generateNumber(-10, 10);
-  }
-
   if (isWordProblem) {
+    const wp = getNextWordProblem();
+    minuend = wp.m;
+    subtrahend = wp.s;
+
     document.getElementById("problemLabel").textContent = "WORD PROBLEM";
-    document.getElementById("problem").textContent =
-      generateWordProblemText(minuend, subtrahend);
+    document.getElementById("problem").textContent = wp.text;
     document.getElementById("problem").classList.add("word-problem-text");
     document.getElementById("problemSubtext").textContent =
       "Figure out the two quantities, then select their coordinate on the SIMS grid.";
   } else {
+    if (currentDifficulty === "beginner") {
+      minuend = generateNumber(1, 9);
+      subtrahend = generateNumber(1, minuend);
+    }
+
+    if (currentDifficulty === "intermediate") {
+      minuend = generateNumber(-8, 8);
+      subtrahend = generateNumber(-8, 8);
+    }
+
+    if (currentDifficulty === "advanced") {
+      minuend = generateNumber(-10, 10);
+      subtrahend = generateNumber(-10, 10);
+    }
+
     document.getElementById("problemLabel").textContent = "PROBLEM";
     document.getElementById("problem").textContent =
       `${formatNumber(minuend)} − (${formatNumber(subtrahend)}) = ?`;
@@ -375,6 +372,16 @@ function submitAnswer() {
       bestStreak = streak;
     }
 
+    // Track progress toward "Integer Master" (Advanced difficulty)
+    if (currentDifficulty === "advanced") {
+      advancedCorrect++;
+    }
+
+    // Track progress toward "Negative Number Expert"
+    if (minuend < 0 || subtrahend < 0) {
+      negativeCorrect++;
+    }
+
     if (isTimeTrial) {
       timeTrialSolved++;
       timeTrialScore += 10 + streak; // speed/streak bonus in Time Trial
@@ -505,6 +512,21 @@ function updateStats() {
   document.getElementById("correct").textContent = correct;
 }
 
+function setBadgeState(key, current, target) {
+  const capped = Math.min(current, target);
+  const unlocked = current >= target;
+
+  document.getElementById(`badge-${key}-progress`).textContent =
+    `${capped} / ${target}`;
+
+  document.getElementById(`badge-${key}-status`).textContent =
+    unlocked ? "✅" : "🔒";
+
+  document.getElementById(`badge-${key}`).classList.toggle("unlocked", unlocked);
+
+  return unlocked;
+}
+
 function updateProgress() {
   const accuracy =
     questions === 0 ? 0 : Math.round((correct / questions) * 100);
@@ -521,15 +543,23 @@ function updateProgress() {
   document.getElementById("bestStreak").textContent =
     bestStreak;
 
-  if (questions >= 1) {
-    document.getElementById("achievementText").textContent =
-      "🏅 FIRST SOLVE — You solved your first SIMS problem!";
-  }
+  // Each badge's own task/threshold:
+  const unlockedFirst = setBadgeState("first", correct, 1);
+  const unlockedHundred = setBadgeState("hundred", correct, 100);
+  const unlockedIntegerMaster = setBadgeState("integer", advancedCorrect, 25);
+  const unlockedNegativeExpert = setBadgeState("negative", negativeCorrect, 20);
+  const unlockedFastThinker = setBadgeState("fast", bestTimeTrialScore, 100);
 
-  if (questions >= 10) {
-    document.getElementById("achievementText").textContent =
-      "🏆 INTEGER EXPLORER — You completed 10 problems!";
-  }
+  // SIMS Champion: unlock all 5 other achievements
+  const unlockedCount = [
+    unlockedFirst,
+    unlockedHundred,
+    unlockedIntegerMaster,
+    unlockedNegativeExpert,
+    unlockedFastThinker,
+  ].filter(Boolean).length;
+
+  setBadgeState("champion", unlockedCount, 5);
 }
 
 function saveData() {
@@ -538,6 +568,8 @@ function saveData() {
   localStorage.setItem("simsQuestions", questions);
   localStorage.setItem("simsStreak", streak);
   localStorage.setItem("simsBest", bestStreak);
+  localStorage.setItem("simsAdvancedCorrect", advancedCorrect);
+  localStorage.setItem("simsNegativeCorrect", negativeCorrect);
 }
 
 function teacherStart() {
