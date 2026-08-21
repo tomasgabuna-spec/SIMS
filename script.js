@@ -6,33 +6,27 @@ let selected = null;
 // --- WORD PROBLEMS MODE ---
 let isWordProblem = false;
 
-function describeAltitude(n) {
-  if (n > 0) return `${n} meters above sea level`;
-  if (n < 0) return `${Math.abs(n)} meters below sea level`;
-  return `at sea level (0 meters)`;
-}
-
 function describeVehicleAltitude(n) {
   if (n > 0) return `a drone flying ${n} meters above sea level`;
   if (n < 0) return `a submarine at a depth of ${Math.abs(n)} meters below sea level`;
   return `a boat sailing right at sea level (0 meters)`;
 }
 
-function describeFieldPosition(n) {
-  if (n > 0) return `gained ${n} yards`;
-  if (n < 0) return `lost ${Math.abs(n)} yards`;
-  return `gained 0 yards (no change)`;
+function describeScoreChange(n) {
+  if (n > 0) return `scored ${n} points more than the other team`;
+  if (n < 0) return `scored ${Math.abs(n)} points fewer than the other team`;
+  return `tied the other team (0 point difference)`;
 }
 
 const wordProblemTemplates = [
-  (m, s) => `The temperature was ${formatNumber(m)}°F in the morning and ${formatNumber(s)}°F in the evening. What is the difference between the morning and evening temperatures?`,
-  (m, s) => `The first vehicle is ${describeVehicleAltitude(m)}. The second vehicle is ${describeVehicleAltitude(s)}. What is the difference in their heights?`,
-  (m, s) => `Account A has a balance of $${formatNumber(m)}, and Account B has a balance of $${formatNumber(s)}. What is the difference between the two balances?`,
-  (m, s) => `On one play, a football team ${describeFieldPosition(m)}, and on the next play it ${describeFieldPosition(s)}. What is the difference between the two plays?`,
-  (m, s) => `A golfer's score relative to par was ${formatNumber(m)} on the first hole and ${formatNumber(s)} on the second hole. What is the difference between the two scores?`,
-  (m, s) => `A hiker's elevation changed to ${formatNumber(m)} meters relative to base camp, then later to ${formatNumber(s)} meters relative to base camp. What is the difference between the two elevations?`,
-  (m, s) => `A company's profit was ${formatNumber(m)} thousand dollars in one quarter and ${formatNumber(s)} thousand dollars in the next quarter. What is the difference between the two quarters' profits?`,
-  (m, s) => `An elevator stopped at floor ${formatNumber(m)} and later at floor ${formatNumber(s)} (basement floors are negative). What is the difference between the two floors?`,
+  (m, s) => `The temperature in Baguio City was ${formatNumber(m)}°C in the morning, and in Manila it was ${formatNumber(s)}°C in the afternoon. What is the difference between the two temperatures?`,
+  (m, s) => `The first vehicle is ${describeVehicleAltitude(m)} near Palawan. The second vehicle is ${describeVehicleAltitude(s)} near Batangas. What is the difference in their heights?`,
+  (m, s) => `Juan's e-wallet has a balance of ₱${formatNumber(m)}, and Maria's e-wallet has a balance of ₱${formatNumber(s)}. What is the difference between the two balances?`,
+  (m, s) => `In the first quarter of a UAAP basketball game, Team A ${describeScoreChange(m)}. In the second quarter, Team A ${describeScoreChange(s)}. What is the difference between the two quarters?`,
+  (m, s) => `A golfer playing in Tagaytay had a score relative to par of ${formatNumber(m)} on the first hole and ${formatNumber(s)} on the second hole. What is the difference between the two scores?`,
+  (m, s) => `A hiker climbing Mt. Pulag was at an elevation of ${formatNumber(m)} meters relative to base camp, then later at ${formatNumber(s)} meters relative to base camp. What is the difference between the two elevations?`,
+  (m, s) => `A sari-sari store's profit was ₱${formatNumber(m)} thousand in one month and ₱${formatNumber(s)} thousand the next month. What is the difference between the two months' profits?`,
+  (m, s) => `An elevator in a Cebu mall stopped at floor ${formatNumber(m)} and later at floor ${formatNumber(s)} (basement floors are negative). What is the difference between the two floors?`,
 ];
 
 let wordProblemQueue = [];
