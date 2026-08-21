@@ -6,11 +6,29 @@ let selected = null;
 // --- WORD PROBLEMS MODE ---
 let isWordProblem = false;
 
+function describeAltitude(n) {
+  if (n > 0) return `${n} meters above sea level`;
+  if (n < 0) return `${Math.abs(n)} meters below sea level`;
+  return `at sea level (0 meters)`;
+}
+
+function describeVehicleAltitude(n) {
+  if (n > 0) return `a drone flying ${n} meters above sea level`;
+  if (n < 0) return `a submarine at a depth of ${Math.abs(n)} meters below sea level`;
+  return `a boat sailing right at sea level (0 meters)`;
+}
+
+function describeFieldPosition(n) {
+  if (n > 0) return `gained ${n} yards`;
+  if (n < 0) return `lost ${Math.abs(n)} yards`;
+  return `gained 0 yards (no change)`;
+}
+
 const wordProblemTemplates = [
   (m, s) => `The temperature was ${formatNumber(m)}°F in the morning and ${formatNumber(s)}°F in the evening. What is the difference between the morning and evening temperatures?`,
-  (m, s) => `A submarine is at a depth of ${formatNumber(m)} meters relative to sea level, and a drone is flying at ${formatNumber(s)} meters relative to sea level. What is the difference in their heights?`,
+  (m, s) => `The first vehicle is ${describeVehicleAltitude(m)}. The second vehicle is ${describeVehicleAltitude(s)}. What is the difference in their heights?`,
   (m, s) => `Account A has a balance of $${formatNumber(m)}, and Account B has a balance of $${formatNumber(s)}. What is the difference between the two balances?`,
-  (m, s) => `On one play, a football team's yard line marker moved to the ${formatNumber(m)} yard line, and on the next play it moved to the ${formatNumber(s)} yard line. What is the difference between the two positions?`,
+  (m, s) => `On one play, a football team ${describeFieldPosition(m)}, and on the next play it ${describeFieldPosition(s)}. What is the difference between the two plays?`,
   (m, s) => `A golfer's score relative to par was ${formatNumber(m)} on the first hole and ${formatNumber(s)} on the second hole. What is the difference between the two scores?`,
   (m, s) => `A hiker's elevation changed to ${formatNumber(m)} meters relative to base camp, then later to ${formatNumber(s)} meters relative to base camp. What is the difference between the two elevations?`,
   (m, s) => `A company's profit was ${formatNumber(m)} thousand dollars in one quarter and ${formatNumber(s)} thousand dollars in the next quarter. What is the difference between the two quarters' profits?`,
