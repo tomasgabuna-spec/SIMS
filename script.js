@@ -88,6 +88,7 @@ function generateProblem() {
     .forEach(cb => cb.checked = false);
 
   document.getElementById("reasonWarning").classList.add("hidden");
+  document.getElementById("stepWarning").classList.add("hidden");
 
   document.querySelectorAll(".reason-flagged")
     .forEach(el => el.classList.remove("reason-flagged"));
@@ -346,12 +347,31 @@ function getCorrectReasonId() {
 }
 
 function nextQuestion() {
+  const stepIds = ["stepMinuend", "stepSubtrahend", "stepIntersection"];
+  const stepWarning = document.getElementById("stepWarning");
   const reasonIds = ["reasonPP", "reasonPN", "reasonNP", "reasonNN"];
   const correctId = getCorrectReasonId();
   const warning = document.getElementById("reasonWarning");
 
   document.querySelectorAll(".reason-flagged")
     .forEach(el => el.classList.remove("reason-flagged"));
+
+  // Require all three "how I found the answer" steps to be checked
+  const uncheckedSteps = stepIds.filter(id =>
+    !document.getElementById(id).checked
+  );
+
+  if (uncheckedSteps.length > 0) {
+    uncheckedSteps.forEach(id => {
+      document.getElementById("stepRow" + id.slice(4))
+        .classList.add("reason-flagged");
+    });
+
+    stepWarning.classList.remove("hidden");
+    return;
+  }
+
+  stepWarning.classList.add("hidden");
 
   const wrongIds = reasonIds.filter(id =>
     id !== correctId && document.getElementById(id).checked

@@ -136,9 +136,13 @@
 
     <div id="explanation" class="explanation hidden">
       <h3>Why is this the answer?</h3>
-      <label><input type="checkbox"> I located the minuend on the X-axis.</label>
-      <label><input type="checkbox"> I located the subtrahend on the Y-axis.</label>
-      <label><input type="checkbox"> I found their intersection.</label>
+      <label id="stepRowMinuend"><input type="checkbox" id="stepMinuend"> I located the minuend on the X-axis.</label>
+      <label id="stepRowSubtrahend"><input type="checkbox" id="stepSubtrahend"> I located the subtrahend on the Y-axis.</label>
+      <label id="stepRowIntersection"><input type="checkbox" id="stepIntersection"> I found their intersection.</label>
+
+      <p id="stepWarning" class="reason-warning hidden">
+        ⚠ Check all three boxes above to confirm how you found the answer before continuing.
+      </p>
 
       <p class="explanation-subtitle">Which rule did I apply?</p>
       <label id="reasonRowPP"><input type="checkbox" id="reasonPP"> <strong>Positive − Positive:</strong> I changed it to Positive + Negative, then subtracted and kept the sign of the number with the greater absolute value.</label>
