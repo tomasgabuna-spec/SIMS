@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+service-account*.json
+firebase-adminsdk*.json
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Build/cache output
+dist/
+build/
+.cache/
