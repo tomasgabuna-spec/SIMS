@@ -709,6 +709,7 @@ function submitAnswer() {
     }
 
     let missionMessage = "";
+    let missionWorldCleared = false;
     if (isMission) {
       const worldIndex = WORLDS.findIndex(w => w.id === currentWorld);
       const w = WORLDS[worldIndex];
@@ -718,42 +719,47 @@ function submitAnswer() {
         missionProgress[w.id] = already + 1;
       }
 
-      // When the current world reaches its target, unlock the next world
-      // and automatically move the student there instead of generating
-      // another question from the same world.
+      let nextMissionWorld = null;
+
       if (
         missionProgress[w.id] >= w.target &&
         worldIndex === missionUnlockedIndex &&
         worldIndex < WORLDS.length - 1
       ) {
         missionUnlockedIndex = worldIndex + 1;
-        const nextWorld = WORLDS[missionUnlockedIndex];
-        missionMessage = `<p>🎉 ${w.name} cleared! ${nextWorld.icon} ${nextWorld.name} is now unlocked.</p>
-          <p>➡️ Moving to ${nextWorld.name}...</p>`;
-
-        saveMissionData();
-
-        // Stop the current question flow and enter the newly unlocked world.
-        document.getElementById("submitBtn").disabled = true;
-        setTimeout(() => {
-          if (isMission && currentWorld === w.id) {
-            startMission(nextWorld.id);
-          }
-        }, 1200);
+        nextMissionWorld = WORLDS[missionUnlockedIndex];
+        missionWorldCleared = true;
+        missionMessage = `<p>🎉 ${w.name} cleared! ${nextMissionWorld.icon} ${nextMissionWorld.name} is now unlocked.</p><p>🚀 Moving to the next world...</p>`;
+      } else if (missionProgress[w.id] >= w.target && worldIndex === WORLDS.length - 1) {
+        missionWorldCleared = true;
+        missionMessage = `<p>🏆 ${w.name} cleared! You completed every mission world!</p><p>🌟 Returning to the Mission Map...</p>`;
       } else if (missionProgress[w.id] >= w.target) {
-        // Final world completed.
-        missionMessage = `<p>🏆 ${w.name} mastered! You completed all mission worlds!</p>`;
-        saveMissionData();
-
-        document.getElementById("submitBtn").disabled = true;
-        setTimeout(() => {
-          if (isMission && currentWorld === w.id) {
-            showMissions();
-          }
-        }, 1500);
+        missionMessage = `<p>⭐ ${w.name} mastered!</p>`;
       } else {
         missionMessage = `<p>⭐ ${w.name} progress: ${missionProgress[w.id]} / ${w.target}</p>`;
-        saveMissionData();
+      }
+
+      saveMissionData();
+
+      // Once a world is cleared, automatically move to the next world instead
+      // of generating another question from the completed world.
+      if (missionWorldCleared) {
+        document.getElementById("submitBtn").disabled = true;
+        document.getElementById("explanation").classList.add("hidden");
+
+        setTimeout(() => {
+          if (!isMission) return;
+
+          if (nextMissionWorld) {
+            currentWorld = nextMissionWorld.id;
+            document.getElementById("levelBadge").textContent = `${nextMissionWorld.icon} ${nextMissionWorld.name.toUpperCase()}`;
+            document.getElementById("gameTitle").textContent = `🗺️ Mission: ${nextMissionWorld.name}`;
+            generateProblem();
+          } else {
+            currentWorld = null;
+            showMissions();
+          }
+        }, 1400);
       }
     }
 
@@ -774,7 +780,7 @@ function submitAnswer() {
       setTimeout(() => {
         if (isTimeTrial) generateProblem();
       }, 700);
-    } else {
+    } else if (!missionWorldCleared) {
       document.getElementById("explanation").classList.remove("hidden");
     }
 
