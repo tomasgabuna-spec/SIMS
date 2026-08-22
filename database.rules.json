@@ -1,0 +1,58 @@
+{
+  "rules": {
+    "classes": {
+      "$classCode": {
+        // Anyone with the code can read the class (teacher dashboard + students need this)
+        ".read": true,
+
+        "meta": {
+          // Only allow a class to be created if it doesn't already exist,
+          // or updated if the code inside matches the path (prevents hijacking another code)
+          ".write": "!data.exists() || newData.child('code').val() === $classCode",
+          ".validate": "newData.hasChildren(['code','name','subject','mode','difficulty','questions'])",
+          "code": { ".validate": "newData.val() === $classCode" },
+          "name": { ".validate": "newData.isString() && newData.val().length <= 100" },
+          "subject": { ".validate": "newData.isString() && newData.val().length <= 100" },
+          "mode": { ".validate": "newData.isString()" },
+          "difficulty": { ".validate": "newData.isString()" },
+          "questions": { ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 100" },
+          "createdAt": { ".validate": "newData.val() === now || newData.isNumber()" },
+          "$other": { ".validate": false }
+        },
+
+        "students": {
+          "$studentId": {
+            // A student may only write to their own studentId record
+            ".write": true,
+            ".validate": "newData.hasChildren(['name'])",
+            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
+            "score": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "correct": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "attempts": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "completed": { ".validate": "newData.isBoolean()" },
+            "joinedAt": { ".validate": true },
+            "lastActivity": { ".validate": true },
+            "$other": { ".validate": false }
+          }
+        },
+
+        "attempts": {
+          ".write": true,
+          "$attemptId": {
+            ".validate": "newData.hasChildren(['studentId','student','correct','time'])",
+            "studentId": { ".validate": "newData.isString()" },
+            "student": { ".validate": "newData.isString() && newData.val().length <= 100" },
+            "correct": { ".validate": "newData.isBoolean()" },
+            "problem": { ".validate": "newData.isString() && newData.val().length <= 200" },
+            "time": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        },
+
+        "$other": { ".validate": false }
+      }
+    },
+
+    "$other": { ".read": false, ".write": false }
+  }
+}

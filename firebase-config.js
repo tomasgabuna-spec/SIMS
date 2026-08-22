@@ -3,6 +3,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCqy-TqB-iKc3yo3CX1iB-IZ7dz7gpXz8Q",
   authDomain: "sims-2b6a0.firebaseapp.com",
+  databaseURL: "https://sims-2b6a0-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "sims-2b6a0",
   storageBucket: "sims-2b6a0.firebasestorage.app",
   messagingSenderId: "1051673313630",
