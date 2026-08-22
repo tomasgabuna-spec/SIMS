@@ -21,6 +21,8 @@
         },
 
         "students": {
+          // Needed so the teacher can initialize this node to {} when creating a class
+          ".write": true,
           "$studentId": {
             // A student may only write to their own studentId record
             ".write": true,
