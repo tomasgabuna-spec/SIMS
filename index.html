@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIMS — Subtracting Integer Mapping System</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- PWA: install to home screen + offline support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6c3df4">
+  <link rel="icon" href="assets/icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SIMS">
 </head>
 <body>
 
@@ -17,6 +26,10 @@
   <button class="home-btn" onclick="showHome()">⌂</button>
 </header>
 
+<div id="offlineBanner" class="offline-banner hidden">
+  📴 You're offline — practice, missions, and progress still work. Teacher Mode / Join Class need internet.
+</div>
+
 <nav id="sidebar">
   <button onclick="showHome()">🏠 Home</button>
   <button onclick="showLearn()">📘 Learn SIMS</button>
@@ -24,11 +37,13 @@
   <button onclick="showMissions()">🗺️ Mission Mode</button>
   <button onclick="startGame('beginner')">🎯 Spot the Difference</button>
   <button onclick="startWordProblems('beginner')">📝 Word Problems</button>
+  <button onclick="showQuiz()">🧠 Quiz Challenge</button>
   <button onclick="startTimeTrial()">⏱️ Time Trial</button>
   <button onclick="showTeacher()">👩‍🏫 Teacher Mode</button>
   <button onclick="showJoinClass()">🎓 Join Class</button>
   <button onclick="showProgress()">📊 Progress</button>
 </nav>
+<div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
 
 <main id="app">
 
@@ -65,6 +80,12 @@
         <div>📝</div>
         <h3>Word Problems</h3>
         <p>Solve real-life scenarios with SIMS.</p>
+      </article>
+
+      <article onclick="showQuiz()">
+        <div>🧠</div>
+        <h3>Quiz Challenge</h3>
+        <p>Multiple-choice practice from Easy to Advanced.</p>
       </article>
 
       <article onclick="startTimeTrial()">
@@ -193,6 +214,14 @@
       <button class="primary" onclick="startTimeTrial()">🔁 PLAY AGAIN</button>
       <button class="secondary" onclick="showHome()">⌂ HOME</button>
     </div>
+  </section>
+
+  <section id="quiz" class="screen">
+    <div class="section-title">
+      <h2>🧠 Quiz Challenge</h2>
+      <p>Carefully checked multiple-choice questions using familiar Philippine contexts and clear mathematical reasoning.</p>
+    </div>
+    <div id="quizContent"></div>
   </section>
 
   <section id="progress" class="screen">
@@ -363,5 +392,81 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>
   <script src="script.js"></script>
+
+
+  <script>
+    // UI/UX enhancements: close the drawer on backdrop click and Escape.
+    (function () {
+      const backdrop = document.getElementById("sidebarBackdrop");
+      const sidebar = document.getElementById("sidebar");
+      if (!backdrop || !sidebar) return;
+
+      const syncDrawer = () => {
+        const open = sidebar.classList.contains("open");
+        backdrop.classList.toggle("visible", open);
+        backdrop.setAttribute("aria-hidden", String(!open));
+        document.body.classList.toggle("drawer-open", open);
+      };
+
+      const originalToggle = window.toggleMenu;
+      window.toggleMenu = function () {
+        originalToggle();
+        syncDrawer();
+      };
+
+      backdrop.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        syncDrawer();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && sidebar.classList.contains("open")) {
+          sidebar.classList.remove("open");
+          syncDrawer();
+        }
+      });
+
+      // All navigation buttons should close the drawer immediately.
+      sidebar.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          setTimeout(syncDrawer, 0);
+        });
+      });
+
+      // Make clickable home cards keyboard-accessible.
+      document.querySelectorAll(".cards article").forEach(card => {
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            card.click();
+          }
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    // Register the service worker so the app shell (HTML/CSS/JS/images)
+    // is cached and the game works with zero internet connection.
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js").catch((err) => {
+          console.warn("Service worker registration failed:", err);
+        });
+      });
+    }
+
+    // Show/hide the offline banner based on connectivity.
+    function updateOfflineBanner() {
+      const banner = document.getElementById("offlineBanner");
+      if (!banner) return;
+      banner.classList.toggle("hidden", navigator.onLine);
+    }
+    window.addEventListener("online", updateOfflineBanner);
+    window.addEventListener("offline", updateOfflineBanner);
+    document.addEventListener("DOMContentLoaded", updateOfflineBanner);
+  </script>
 </body>
 </html>
