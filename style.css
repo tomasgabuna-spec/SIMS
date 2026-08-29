@@ -16,18 +16,9 @@
 
 body {
   font-family: Arial, sans-serif;
+  background: var(--light);
   color: var(--dark);
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(22, 184, 166, 0.35), transparent 55%),
-    radial-gradient(circle at 85% 10%, rgba(108, 61, 244, 0.4), transparent 55%),
-    linear-gradient(180deg, rgba(245, 247, 251, 0.94), rgba(245, 247, 251, 0.97) 40%, rgba(245, 247, 251, 1) 100%),
-    url('assets/sims-grid-bg.png');
-  background-size: cover, cover, cover, 100%;
-  background-position: center, center, center, center top;
-  background-repeat: no-repeat, no-repeat, no-repeat, repeat-y;
-  background-attachment: fixed, fixed, fixed, fixed;
-  background-blend-mode: normal, normal, normal, luminosity;
 }
 
 .offline-banner {
@@ -133,10 +124,12 @@ main {
   background:
     radial-gradient(circle at 15% 15%, rgba(22, 184, 166, 0.55), transparent 55%),
     radial-gradient(circle at 85% 85%, rgba(108, 61, 244, 0.6), transparent 55%),
-    linear-gradient(160deg, rgba(23, 32, 51, 0.94), rgba(23, 32, 51, 0.8) 55%, rgba(108, 61, 244, 0.55));
-  background-size: cover, cover, cover;
-  background-position: center, center, center;
+    linear-gradient(160deg, rgba(23, 32, 51, 0.94), rgba(23, 32, 51, 0.8) 55%, rgba(108, 61, 244, 0.55)),
+    url('assets/sims-grid-bg.png');
+  background-size: cover, cover, cover, 130%;
+  background-position: center, center, center, center 30%;
   background-repeat: no-repeat;
+  background-blend-mode: normal, normal, normal, luminosity;
   box-shadow: 0 20px 45px -15px rgba(23, 32, 51, 0.5);
 }
 
@@ -183,6 +176,8 @@ main {
 @media (max-width: 550px) {
   .hero {
     padding: 55px 16px;
+    background-size: cover, cover, cover, 220%;
+    background-position: center, center, center, 65% 25%;
   }
 }
 
