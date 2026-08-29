@@ -370,6 +370,7 @@ let correct = Number(localStorage.getItem("simsCorrect")) || 0;
 let questions = Number(localStorage.getItem("simsQuestions")) || 0;
 let streak = Number(localStorage.getItem("simsStreak")) || 0;
 let bestStreak = Number(localStorage.getItem("simsBest")) || 0;
+let wrongStreak = 0;
 
 // --- ACHIEVEMENT TRACKING ---
 let advancedCorrect = Number(localStorage.getItem("simsAdvancedCorrect")) || 0;
@@ -416,6 +417,8 @@ function generateNumber(min, max) {
 }
 
 function generateProblem() {
+  maybeAdaptDifficulty();
+
   if (isWordProblem) {
     const wp = getNextWordProblem();
     minuend = wp.m;
@@ -439,20 +442,9 @@ function generateProblem() {
     document.getElementById("problemSubtext").textContent =
       "Find the correct coordinate on the SIMS grid.";
   } else {
-    if (currentDifficulty === "beginner") {
-      minuend = generateNumber(1, 9);
-      subtrahend = generateNumber(1, minuend);
-    }
-
-    if (currentDifficulty === "intermediate") {
-      minuend = generateNumber(-8, 8);
-      subtrahend = generateNumber(-8, 8);
-    }
-
-    if (currentDifficulty === "advanced") {
-      minuend = generateNumber(-10, 10);
-      subtrahend = generateNumber(-10, 10);
-    }
+    const generated = generatePracticeProblem(currentDifficulty);
+    minuend = generated.m;
+    subtrahend = generated.s;
 
     document.getElementById("problemLabel").textContent = "PROBLEM";
     document.getElementById("problem").textContent =
@@ -698,7 +690,9 @@ function submitAnswer() {
 
     correct++;
     streak++;
+    wrongStreak = 0;
     score += 10;
+    playSound("correct");
 
     if (streak > bestStreak) {
       bestStreak = streak;
@@ -797,6 +791,8 @@ function submitAnswer() {
 
   } else {
     streak = 0;
+    wrongStreak++;
+    playSound("wrong");
 
     feedback.className = "feedback wrong";
     feedback.innerHTML = isTimeTrial ? `
@@ -1069,10 +1065,11 @@ function makeQuizOptions(item){ return shuffleArray(item.options || []).slice();
 function quizQuestionPool(level){return quizBank.filter(x=>x.d===level);}
 function quizDifficultyLabel(level){return({easy:'Easy',average:'Average',difficult:'Difficult',advanced:'Advanced'})[level]||level;}
 function showQuiz(){showScreen('quiz');quizState.started?renderQuizQuestion():renderQuizIntro();}
-function setQuizDifficulty(level){quizState.difficulty=level;document.querySelectorAll('.quiz-difficulty').forEach(b=>b.classList.toggle('active',b.dataset.level===level));renderQuizPreview();}
+function setQuizDifficulty(level){quizState.difficulty=level;playSound('click');document.querySelectorAll('.quiz-difficulty').forEach(b=>b.classList.toggle('active',b.dataset.level===level));renderQuizPreview();}
 function renderQuizIntro(){
   const box=document.getElementById('quizContent');
-  box.innerHTML=`<div class="quiz-welcome"><div class="quiz-icon">🧠</div><h2>SIMS Quiz Challenge</h2><p>Build accuracy and mathematical reasoning through carefully checked multiple-choice questions set in familiar Philippine contexts.</p><div class="quiz-difficulty-row">${['easy','average','difficult','advanced'].map(d=>`<button class="quiz-difficulty ${d===quizState.difficulty?'active':''}" data-level="${d}" onclick="setQuizDifficulty('${d}')">${quizDifficultyLabel(d)}</button>`).join('')}</div><div id="quizPreview" class="quiz-preview"></div><button class="primary quiz-start" onclick="startQuiz()">START ${quizDifficultyLabel(quizState.difficulty).toUpperCase()} QUIZ</button></div>`;
+  const adaptiveBadge=gameSettings.adaptiveDifficulty?`<div class="quiz-adaptive-badge">🎯 Adaptive Difficulty is ON — your level will adjust after each round.</div>`:'';
+  box.innerHTML=`<div class="quiz-welcome"><div class="quiz-icon">🧠</div><h2>SIMS Quiz Challenge</h2><p>Build accuracy and mathematical reasoning through carefully checked multiple-choice questions set in familiar Philippine contexts.</p>${adaptiveBadge}<div class="quiz-difficulty-row">${['easy','average','difficult','advanced'].map(d=>`<button class="quiz-difficulty ${d===quizState.difficulty?'active':''}" data-level="${d}" onclick="setQuizDifficulty('${d}')">${quizDifficultyLabel(d)}</button>`).join('')}</div><div id="quizPreview" class="quiz-preview"></div><button class="primary quiz-start" onclick="startQuiz()">START ${quizDifficultyLabel(quizState.difficulty).toUpperCase()} QUIZ</button></div>`;
   renderQuizPreview();
 }
 function renderQuizPreview(){const el=document.getElementById('quizPreview');if(el){const n=quizQuestionPool(quizState.difficulty).length;el.innerHTML=`<strong>${n} questions available</strong><span>10 questions per round • 4 teacher-authored choices • misconception feedback • Offline-ready</span>`;}}
@@ -1085,7 +1082,7 @@ function renderQuizQuestion(){
 function answerQuiz(value,button){
   if(quizState.answered)return;quizState.answered=true;const item=quizState.questions[quizState.index];const ok=value===item.correct;
   document.querySelectorAll('.quiz-option').forEach(b=>{b.disabled=true;if(b.dataset.value===item.correct)b.classList.add('quiz-correct');});
-  if(ok){button.classList.add('quiz-correct');quizState.correct++;quizState.score+=10;}else button.classList.add('quiz-wrong');
+  if(ok){button.classList.add('quiz-correct');quizState.correct++;quizState.score+=10;playSound('correct');}else{button.classList.add('quiz-wrong');playSound('wrong');}
   const chosen=item.options.find(o=>o.value===value);
   const fb=document.getElementById('quizFeedback');fb.className=`quiz-feedback ${ok?'correct':'wrong'}`;fb.innerHTML=`<strong>${ok?'Correct!':'Keep practicing.'}</strong><p>${chosen?chosen.feedback:item.e}</p>`;document.getElementById('quizNext').classList.remove('hidden');
 }
@@ -1093,8 +1090,273 @@ function nextQuizQuestion(){quizState.index++;quizState.answered=false;renderQui
 function finishQuiz(){
   const total=quizState.questions.length||10,pct=Math.round(quizState.correct/total*100),key=quizState.difficulty;
   quizState.stats[key]=quizState.stats[key]||{attempts:0,best:0,last:0};quizState.stats[key].attempts++;quizState.stats[key].best=Math.max(quizState.stats[key].best,pct);quizState.stats[key].last=pct;saveQuizStats();
-  document.getElementById('quizContent').innerHTML=`<div class="quiz-result"><div class="quiz-result-icon">${pct>=80?'🏆':pct>=60?'⭐':'📚'}</div><h2>${pct>=80?'Excellent work!':pct>=60?'Good effort!':'Keep practicing!'}</h2><p class="quiz-result-score">${quizState.correct} / ${total}</p><p class="quiz-result-percent">${pct}%</p><p>You completed the ${quizDifficultyLabel(key)} quiz.</p><div class="quiz-result-actions"><button class="primary" onclick="startQuiz()">🔁 RETRY QUIZ</button><button class="secondary" onclick="renderQuizIntro()">CHANGE DIFFICULTY</button><button class="secondary" onclick="showHome()">⌂ HOME</button></div></div>`;quizState.started=false;
+  playSound(pct>=80?'complete':(pct<50?'wrong':'levelup'));
+  const adaptiveNote=applyAdaptiveQuizDifficulty(pct,key);
+  document.getElementById('quizContent').innerHTML=`<div class="quiz-result"><div class="quiz-result-icon">${pct>=80?'🏆':pct>=60?'⭐':'📚'}</div><h2>${pct>=80?'Excellent work!':pct>=60?'Good effort!':'Keep practicing!'}</h2><p class="quiz-result-score">${quizState.correct} / ${total}</p><p class="quiz-result-percent">${pct}%</p><p>You completed the ${quizDifficultyLabel(key)} quiz.</p>${adaptiveNote?`<p class="quiz-adaptive-note">🎯 ${adaptiveNote}</p>`:''}<div class="quiz-result-actions"><button class="primary" onclick="startQuiz()">🔁 RETRY QUIZ</button><button class="secondary" onclick="renderQuizIntro()">CHANGE DIFFICULTY</button><button class="secondary" onclick="showHome()">⌂ HOME</button></div></div>`;quizState.started=false;
 }
 function quizResetProgress(){if(!confirm('Reset quiz history?'))return;quizState.stats={};saveQuizStats();renderQuizIntro();}
+
+// =========================================================
+// GAME SETTINGS MODULE — Adaptive Difficulty, Sound Effects,
+// and Mathematics Engine Verification
+// =========================================================
+
+const DEFAULT_GAME_SETTINGS = { adaptiveDifficulty: false, soundEffects: true, mathVerification: true };
+const gameSettings = Object.assign(
+  {},
+  DEFAULT_GAME_SETTINGS,
+  JSON.parse(localStorage.getItem("simsGameSettings") || "{}")
+);
+function saveGameSettings() {
+  localStorage.setItem("simsGameSettings", JSON.stringify(gameSettings));
+}
+
+// --- Sound Effects (Web Audio — no external assets, works fully offline) ---
+let audioCtx = null;
+function getAudioCtx() {
+  if (audioCtx) return audioCtx;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  } catch (e) {
+    audioCtx = null;
+  }
+  return audioCtx;
+}
+function playTone(freq, duration, type, gain, delay) {
+  if (!gameSettings.soundEffects) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  if (ctx.state === "suspended") ctx.resume();
+  const start = ctx.currentTime + (delay || 0);
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = type || "sine";
+  osc.frequency.setValueAtTime(freq, start);
+  g.gain.setValueAtTime(gain || 0.15, start);
+  g.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(start);
+  osc.stop(start + duration + 0.03);
+}
+const SOUND_PATTERNS = {
+  correct: () => { playTone(880, 0.12, "sine", 0.15); playTone(1175, 0.15, "sine", 0.13, 0.09); },
+  wrong: () => { playTone(180, 0.22, "sawtooth", 0.1); },
+  click: () => { playTone(600, 0.05, "square", 0.05); },
+  levelup: () => { playTone(660, 0.1, "sine", 0.13); playTone(880, 0.1, "sine", 0.13, 0.09); playTone(1100, 0.18, "sine", 0.13, 0.18); },
+  leveldown: () => { playTone(500, 0.14, "triangle", 0.11); playTone(350, 0.18, "triangle", 0.11, 0.1); },
+  complete: () => { playTone(523, 0.12, "sine", 0.13); playTone(659, 0.12, "sine", 0.13, 0.11); playTone(784, 0.12, "sine", 0.13, 0.22); playTone(1047, 0.22, "sine", 0.13, 0.33); },
+};
+function playSound(name) {
+  if (!gameSettings.soundEffects) return;
+  const fn = SOUND_PATTERNS[name];
+  if (fn) fn();
+}
+
+// --- Adaptive Difficulty ---
+const PRACTICE_DIFFICULTY_ORDER = ["beginner", "intermediate", "advanced"];
+const QUIZ_DIFFICULTY_ORDER = ["easy", "average", "difficult", "advanced"];
+
+function practiceDifficultyLabel(level) {
+  return String(level).charAt(0).toUpperCase() + String(level).slice(1);
+}
+
+function showAdaptiveToast(message) {
+  const el = document.getElementById("adaptiveToast");
+  if (!el) return;
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(showAdaptiveToast._t);
+  showAdaptiveToast._t = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+// Called at the top of generateProblem(); only affects the standard
+// Practice / Spot the Difference mode (not Word Problems, Missions, or Time Trial,
+// which already manage their own difficulty/pacing).
+function maybeAdaptDifficulty() {
+  if (!gameSettings.adaptiveDifficulty) return;
+  if (isMission || isTimeTrial || isWordProblem) return;
+  const idx = PRACTICE_DIFFICULTY_ORDER.indexOf(currentDifficulty);
+  if (idx === -1) return;
+
+  if (streak > 0 && streak % 3 === 0 && idx < PRACTICE_DIFFICULTY_ORDER.length - 1) {
+    currentDifficulty = PRACTICE_DIFFICULTY_ORDER[idx + 1];
+    wrongStreak = 0;
+    const badge = document.getElementById("levelBadge");
+    if (badge) badge.textContent = currentDifficulty.toUpperCase();
+    showAdaptiveToast(`⬆ Nice streak! Difficulty raised to ${practiceDifficultyLabel(currentDifficulty)}.`);
+    playSound("levelup");
+  } else if (wrongStreak >= 2 && idx > 0) {
+    currentDifficulty = PRACTICE_DIFFICULTY_ORDER[idx - 1];
+    wrongStreak = 0;
+    const badge = document.getElementById("levelBadge");
+    if (badge) badge.textContent = currentDifficulty.toUpperCase();
+    showAdaptiveToast(`⬇ Let's ease up — difficulty set to ${practiceDifficultyLabel(currentDifficulty)}.`);
+    playSound("leveldown");
+  }
+}
+
+// Called from finishQuiz(); adjusts quizState.difficulty for the *next* round
+// based on this round's score, and returns a note to show on the result screen.
+function applyAdaptiveQuizDifficulty(pct, key) {
+  if (!gameSettings.adaptiveDifficulty) return "";
+  const idx = QUIZ_DIFFICULTY_ORDER.indexOf(key);
+  if (idx === -1) return "";
+
+  if (pct >= 80 && idx < QUIZ_DIFFICULTY_ORDER.length - 1) {
+    quizState.difficulty = QUIZ_DIFFICULTY_ORDER[idx + 1];
+    return `Adaptive Difficulty raised your next quiz to ${quizDifficultyLabel(quizState.difficulty)}.`;
+  }
+  if (pct < 50 && idx > 0) {
+    quizState.difficulty = QUIZ_DIFFICULTY_ORDER[idx - 1];
+    return `Adaptive Difficulty eased your next quiz to ${quizDifficultyLabel(quizState.difficulty)}.`;
+  }
+  return "";
+}
+
+// --- Mathematics Engine Verification ---
+
+// Single source of truth for Practice-mode number generation, shared by
+// generateProblem() and the verifier below, so the two can never drift apart.
+function generatePracticeProblem(level) {
+  let m, s;
+  if (level === "beginner") {
+    m = generateNumber(1, 9);
+    s = generateNumber(1, m);
+  } else if (level === "advanced") {
+    m = generateNumber(-10, 10);
+    s = generateNumber(-10, 10);
+  } else {
+    m = generateNumber(-8, 8);
+    s = generateNumber(-8, 8);
+  }
+  return { m, s };
+}
+
+function verifyMathEngine() {
+  const issues = [];
+
+  // 1) Quiz bank structural integrity — catches the exact class of bug where
+  //    a question renders with missing or malformed answer choices.
+  let quizPassed = 0;
+  quizBank.forEach((item, i) => {
+    const label = `Quiz Q${i + 1} (${item.d}): "${String(item.q).slice(0, 48)}${item.q.length > 48 ? "…" : ""}"`;
+    const opts = item.options || [];
+    let ok = true;
+
+    if (opts.length !== 4) { issues.push(`${label} — expected 4 options, found ${opts.length}.`); ok = false; }
+
+    const values = opts.map(o => o.value);
+    if (new Set(values).size !== values.length) { issues.push(`${label} — duplicate option letters.`); ok = false; }
+
+    const correctMatches = opts.filter(o => o.value === item.correct);
+    if (correctMatches.length !== 1) { issues.push(`${label} — expected exactly one option matching the correct answer, found ${correctMatches.length}.`); ok = false; }
+
+    const labels = opts.map(o => String(o.label).trim());
+    if (new Set(labels).size !== labels.length) { issues.push(`${label} — two answer choices show the same value.`); ok = false; }
+
+    opts.forEach(o => {
+      if (!o.feedback || !String(o.feedback).trim()) { issues.push(`${label} — option ${o.value} is missing feedback text.`); ok = false; }
+    });
+
+    if (!item.hint || !String(item.hint).trim()) { issues.push(`${label} — missing a hint.`); ok = false; }
+    if (!item.e || !String(item.e).trim()) { issues.push(`${label} — missing a worked explanation.`); ok = false; }
+
+    if (ok) quizPassed++;
+  });
+
+  // 2) Practice problem generator invariants — every sampled problem must stay
+  //    within its designed difficulty range and within the SIMS grid bounds.
+  const SAMPLES_PER_LEVEL = 300;
+  let enginePassed = 0, engineTotal = 0;
+  PRACTICE_DIFFICULTY_ORDER.forEach(level => {
+    for (let i = 0; i < SAMPLES_PER_LEVEL; i++) {
+      engineTotal++;
+      const { m, s } = generatePracticeProblem(level);
+      let ok = Number.isInteger(m) && Number.isInteger(s) && Math.abs(m) <= range && Math.abs(s) <= range;
+      if (level === "beginner") ok = ok && m >= 1 && m <= 9 && s >= 1 && s <= m;
+      if (level === "intermediate") ok = ok && m >= -8 && m <= 8 && s >= -8 && s <= 8;
+      if (level === "advanced") ok = ok && m >= -10 && m <= 10 && s >= -10 && s <= 10;
+      if (ok) { enginePassed++; } else { issues.push(`Problem generator sample out of range at ${level}: minuend=${m}, subtrahend=${s}.`); }
+    }
+  });
+
+  const report = {
+    timestamp: new Date().toISOString(),
+    quiz: { total: quizBank.length, passed: quizPassed, failed: quizBank.length - quizPassed },
+    engine: { total: engineTotal, passed: enginePassed, failed: engineTotal - enginePassed },
+    issues,
+    allPassed: issues.length === 0,
+  };
+  localStorage.setItem("simsVerificationReport", JSON.stringify(report));
+  return report;
+}
+
+function renderVerificationReport(report) {
+  const meta = document.getElementById("verificationMeta");
+  const box = document.getElementById("verificationReport");
+  if (!meta || !box) return;
+
+  if (!report) {
+    meta.textContent = "Not run yet.";
+    box.innerHTML = "";
+    return;
+  }
+
+  const when = new Date(report.timestamp).toLocaleString("en-PH");
+  meta.textContent = `Last run: ${when}`;
+
+  const quizChip = `<span class="verify-chip ${report.quiz.failed === 0 ? "pass" : "fail"}">${report.quiz.failed === 0 ? "✅" : "⚠️"} Quiz bank: ${report.quiz.passed}/${report.quiz.total} questions passed</span>`;
+  const engineChip = `<span class="verify-chip ${report.engine.failed === 0 ? "pass" : "fail"}">${report.engine.failed === 0 ? "✅" : "⚠️"} Problem engine: ${report.engine.passed}/${report.engine.total} samples passed</span>`;
+
+  let issuesHtml;
+  if (report.issues.length) {
+    const shown = report.issues.slice(0, 15);
+    issuesHtml = `<ul class="verify-issues">${shown.map(i => `<li>${escapeHtml(i)}</li>`).join("")}</ul>`;
+    if (report.issues.length > shown.length) {
+      issuesHtml += `<p class="verify-more">+ ${report.issues.length - shown.length} more issue(s) not shown.</p>`;
+    }
+  } else {
+    issuesHtml = `<p class="verify-clean">No issues found — every quiz question has exactly one correct choice, four complete teacher-authored options, and the problem generator stayed within its designed ranges across ${report.engine.total} samples.</p>`;
+  }
+
+  box.innerHTML = `<div class="verify-summary">${quizChip}${engineChip}</div>${issuesHtml}`;
+}
+
+function manualVerify() {
+  const report = verifyMathEngine();
+  renderVerificationReport(report);
+  playSound(report.allPassed ? "complete" : "wrong");
+}
+
+// --- Settings screen wiring ---
+function showSettings() {
+  syncSettingsUI();
+  renderVerificationReport(JSON.parse(localStorage.getItem("simsVerificationReport") || "null"));
+  showScreen("settings");
+}
+function syncSettingsUI() {
+  const a = document.getElementById("settingAdaptive");
+  const s = document.getElementById("settingSound");
+  const v = document.getElementById("settingVerification");
+  if (a) a.checked = gameSettings.adaptiveDifficulty;
+  if (s) s.checked = gameSettings.soundEffects;
+  if (v) v.checked = gameSettings.mathVerification;
+}
+function onSettingToggle(key, value) {
+  gameSettings[key] = value;
+  saveGameSettings();
+  if (value) playSound("click");
+  if (key === "mathVerification" && value) manualVerify();
+}
+
+// Silently self-check the quiz bank and problem engine on every load, so
+// broken content is caught before a student ever sees it.
+document.addEventListener("DOMContentLoaded", () => {
+  if (gameSettings.mathVerification) {
+    const report = verifyMathEngine();
+    if (document.getElementById("verificationReport")) renderVerificationReport(report);
+  }
+});
 
 updateStats();

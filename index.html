@@ -42,6 +42,7 @@
   <button onclick="showTeacher()">👩‍🏫 Teacher Mode</button>
   <button onclick="showJoinClass()">🎓 Join Class</button>
   <button onclick="showProgress()">📊 Progress</button>
+  <button onclick="showSettings()">⚙️ Settings</button>
 </nav>
 <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
 
@@ -148,6 +149,7 @@
   </section>
 
   <section id="game" class="screen">
+    <div id="adaptiveToast" class="adaptive-toast"></div>
     <div class="game-header">
       <div>
         <span class="badge" id="levelBadge">BEGINNER</span>
@@ -193,10 +195,11 @@
       </p>
 
       <p class="explanation-subtitle">Which rule did I apply?</p>
-      <label id="reasonRowPP"><input type="checkbox" id="reasonPP"> <strong>Positive − Positive:</strong> I changed it to Positive + Negative, then subtracted and kept the sign of the number with the greater absolute value.</label>
-      <label id="reasonRowPN"><input type="checkbox" id="reasonPN"> <strong>Positive − Negative:</strong> I changed it to Positive + Positive, then added the two numbers (the sum stays positive).</label>
-      <label id="reasonRowNP"><input type="checkbox" id="reasonNP"> <strong>Negative − Positive:</strong> I changed it to Negative + Negative, then added the two numbers (the sum stays negative).</label>
-      <label id="reasonRowNN"><input type="checkbox" id="reasonNN"> <strong>Negative − Negative:</strong> I changed it to Negative + Positive, then subtracted and kept the sign of the number with the greater absolute value.</label>
+      <p class="explanation-note">Every case below uses the same textbook rule — <strong>Keep‑Change‑Change</strong>: keep the first number, change subtraction to addition, and change the sign of the second number. Then add using the integer addition rule (same signs → add and keep the sign; different signs → subtract and keep the sign of the greater absolute value).</p>
+      <label id="reasonRowPP"><input type="checkbox" id="reasonPP"> <strong>Positive − Positive:</strong> Keep‑Change‑Change turns this into Positive + Negative — different signs, so I subtracted the smaller absolute value from the larger and kept the sign of the number with the greater absolute value.</label>
+      <label id="reasonRowPN"><input type="checkbox" id="reasonPN"> <strong>Positive − Negative:</strong> Keep‑Change‑Change turns this into Positive + Positive — same signs, so I added the absolute values and kept the positive sign.</label>
+      <label id="reasonRowNP"><input type="checkbox" id="reasonNP"> <strong>Negative − Positive:</strong> Keep‑Change‑Change turns this into Negative + Negative — same signs, so I added the absolute values and kept the negative sign.</label>
+      <label id="reasonRowNN"><input type="checkbox" id="reasonNN"> <strong>Negative − Negative:</strong> Keep‑Change‑Change turns this into Negative + Positive — different signs, so I subtracted the smaller absolute value from the larger and kept the sign of the number with the greater absolute value.</label>
 
       <p id="reasonWarning" class="reason-warning hidden">
         ⚠ That's not the rule that applies to this problem. Uncheck it and
@@ -316,6 +319,59 @@
           <span class="badge-status" id="badge-champion-status">🔒</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="settings" class="screen">
+    <div class="section-title">
+      <h2>⚙️ Game Settings</h2>
+      <p>Personalize how SIMS plays, sounds, and checks its own math on this device.</p>
+    </div>
+
+    <div class="settings-list">
+      <div class="settings-row">
+        <div class="settings-row-text">
+          <h3>🎯 Adaptive Difficulty</h3>
+          <p>Automatically raises the level after a strong streak and eases it back after a few misses, in Practice ("Spot the Difference") and Quiz Challenge.</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingAdaptive" onchange="onSettingToggle('adaptiveDifficulty', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-row-text">
+          <h3>🔊 Sound Effects</h3>
+          <p>Short offline tones for correct/incorrect answers, difficulty changes, and quiz results. No audio files needed — works fully offline.</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingSound" onchange="onSettingToggle('soundEffects', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-row-text">
+          <h3>🧮 Mathematics Engine Verification</h3>
+          <p>Runs a self-check on the 80-question quiz bank and the problem generator every time the app loads, to catch broken questions or bad number ranges before students see them.</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingVerification" onchange="onSettingToggle('mathVerification', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="verification-panel">
+      <div class="verification-panel-head">
+        <div>
+          <h3>Verification report</h3>
+          <p id="verificationMeta">Not run yet.</p>
+        </div>
+        <button class="secondary" onclick="manualVerify()">🔁 Run Verification Now</button>
+      </div>
+      <div id="verificationReport"></div>
     </div>
   </section>
 

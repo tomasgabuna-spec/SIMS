@@ -16,9 +16,18 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: var(--light);
   color: var(--dark);
   min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(22, 184, 166, 0.35), transparent 55%),
+    radial-gradient(circle at 85% 10%, rgba(108, 61, 244, 0.4), transparent 55%),
+    linear-gradient(180deg, rgba(245, 247, 251, 0.94), rgba(245, 247, 251, 0.97) 40%, rgba(245, 247, 251, 1) 100%),
+    url('assets/sims-grid-bg.png');
+  background-size: cover, cover, cover, 100%;
+  background-position: center, center, center, center top;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat-y;
+  background-attachment: fixed, fixed, fixed, fixed;
+  background-blend-mode: normal, normal, normal, luminosity;
 }
 
 .offline-banner {
@@ -124,12 +133,10 @@ main {
   background:
     radial-gradient(circle at 15% 15%, rgba(22, 184, 166, 0.55), transparent 55%),
     radial-gradient(circle at 85% 85%, rgba(108, 61, 244, 0.6), transparent 55%),
-    linear-gradient(160deg, rgba(23, 32, 51, 0.94), rgba(23, 32, 51, 0.8) 55%, rgba(108, 61, 244, 0.55)),
-    url('assets/sims-grid-bg.png');
-  background-size: cover, cover, cover, 130%;
-  background-position: center, center, center, center 30%;
+    linear-gradient(160deg, rgba(23, 32, 51, 0.94), rgba(23, 32, 51, 0.8) 55%, rgba(108, 61, 244, 0.55));
+  background-size: cover, cover, cover;
+  background-position: center, center, center;
   background-repeat: no-repeat;
-  background-blend-mode: normal, normal, normal, luminosity;
   box-shadow: 0 20px 45px -15px rgba(23, 32, 51, 0.5);
 }
 
@@ -176,8 +183,6 @@ main {
 @media (max-width: 550px) {
   .hero {
     padding: 55px 16px;
-    background-size: cover, cover, cover, 220%;
-    background-position: center, center, center, 65% 25%;
   }
 }
 
@@ -520,6 +525,17 @@ button {
   border-top: 1px solid #eee;
   font-weight: 700;
   color: var(--primary);
+}
+
+.explanation-note {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #667085;
+}
+
+.explanation-note strong {
+  color: var(--dark);
 }
 
 .reason-warning {
@@ -1371,3 +1387,42 @@ footer{
 .quiz-feedback{margin-top:18px;padding:16px 18px;border-radius:15px;line-height:1.55}.quiz-feedback.correct{background:#effaf5;border:1px solid #cceedd}.quiz-feedback.wrong{background:#fff5f3;border:1px solid #f4d2cd}.quiz-feedback strong{display:block;margin-bottom:4px}.quiz-feedback p{margin-bottom:5px}.quiz-question-card #quizNext{margin:18px 0 0}.quiz-result-score{font-size:58px!important;line-height:1;font-weight:900;color:var(--primary)!important;margin-bottom:4px!important}.quiz-result-percent{font-size:24px!important;font-weight:900;color:var(--secondary)!important;margin-bottom:12px!important}.quiz-result-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}.quiz-result-actions button{min-width:150px}
 @media(max-width:700px){.quiz-difficulty-row{grid-template-columns:1fr 1fr}.quiz-options{grid-template-columns:1fr}.quiz-top{align-items:flex-start}}
 @media(max-width:430px){.quiz-welcome,.quiz-result,.quiz-question-card{border-radius:18px;padding:22px 15px}.quiz-difficulty{padding:11px 5px;font-size:12px}.quiz-option{min-height:58px;padding:11px 12px}.quiz-option b{font-size:15px}.quiz-top h2{font-size:22px}}
+
+/* Quiz adaptive difficulty note */
+.quiz-adaptive-badge{max-width:680px;margin:0 auto 18px;padding:10px 16px;border-radius:14px;background:#f0edff;color:var(--primary);font-weight:800;font-size:13.5px}
+.quiz-adaptive-note{max-width:680px;margin:-6px auto 18px;padding:10px 16px;border-radius:14px;background:#f0edff;color:var(--primary);font-weight:800;font-size:13.5px}
+
+/* Settings screen */
+.settings-list{display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:20px;background:var(--white);border:1px solid var(--line,#e5e9f2);border-radius:18px;padding:18px 20px;box-shadow:0 4px 16px rgba(23,32,51,.05)}
+.settings-row-text h3{font-size:16px;margin-bottom:4px}
+.settings-row-text p{color:var(--muted,#667085);font-size:13px;line-height:1.55;max-width:560px}
+
+.toggle-switch{position:relative;display:inline-block;width:50px;height:28px;flex:0 0 50px}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;cursor:pointer;background:#d9deea;border-radius:999px;transition:.2s ease}
+.toggle-slider::before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s ease;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.toggle-switch input:checked+.toggle-slider{background:var(--primary)}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(22px)}
+.toggle-switch input:focus-visible+.toggle-slider{outline:3px solid rgba(103,80,232,.28);outline-offset:2px}
+
+.verification-panel{background:var(--white);border:1px solid var(--line,#e5e9f2);border-radius:20px;padding:22px 24px;box-shadow:0 8px 24px rgba(23,32,51,.06)}
+.verification-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.verification-panel-head h3{font-size:17px;margin-bottom:2px}
+.verification-panel-head p{color:var(--muted,#667085);font-size:13px}
+.verify-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.verify-chip{padding:8px 14px;border-radius:999px;font-weight:800;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.verify-chip.pass{background:#effaf5;color:var(--success,#16a36b);border:1px solid #cceedd}
+.verify-chip.fail{background:#fff5f3;color:var(--danger,#e6534b);border:1px solid #f4d2cd}
+.verify-issues{list-style:none;display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding-right:4px}
+.verify-issues li{background:#fff7f6;border:1px solid #fbdedb;color:#8a3a33;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.5}
+.verify-more{color:var(--muted,#667085);font-size:12.5px;margin-top:6px}
+.verify-clean{color:var(--success,#16a36b);font-weight:700;font-size:13.5px;line-height:1.55}
+
+.adaptive-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--dark,#182235);color:#fff;padding:12px 20px;border-radius:14px;font-weight:700;font-size:14px;box-shadow:0 14px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s ease;z-index:60;max-width:88vw;text-align:center}
+.adaptive-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .settings-row{flex-direction:column;align-items:flex-start}
+  .verification-panel-head{flex-direction:column}
+}
