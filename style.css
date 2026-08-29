@@ -85,6 +85,7 @@ body {
   padding: 20px;
   z-index: 15;
   transition: .3s;
+  overflow-y: auto;
 }
 
 #sidebar.open {
@@ -1092,6 +1093,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,.cards article:foc
   backdrop-filter:blur(20px);
   box-shadow:12px 0 35px rgba(0,0,0,.16);
   border-right:1px solid rgba(255,255,255,.08);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 #sidebar.open{left:0}
 #sidebar button{
@@ -1368,6 +1371,22 @@ footer{
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
+/* Quiz back button */
+.quiz-section-title{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.quiz-back-btn{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;background:#fff;border:1px solid var(--line,#e5e9f2);color:var(--dark);font-weight:800;font-size:14px;padding:10px 16px;border-radius:12px;cursor:pointer;box-shadow:0 4px 14px rgba(23,32,51,.05);transition:.18s ease}
+.quiz-back-btn:hover{background:#f0edff;border-color:var(--primary);color:var(--primary);transform:translateY(-1px)}
+.quiz-back-btn:active{transform:translateY(0)}
+.quiz-back-btn span{font-size:16px;line-height:1}
+@media(max-width:550px){
+  .quiz-section-title{gap:10px}
+  .quiz-back-btn{padding:8px 12px;font-size:13px;border-radius:10px}
+}
+@media(max-width:430px){
+  .quiz-section-title{flex-direction:row;align-items:center}
+  .quiz-back-btn{padding:7px 10px;font-size:0}
+  .quiz-back-btn span{font-size:17px}
 }
 
 /* Quiz Challenge */
