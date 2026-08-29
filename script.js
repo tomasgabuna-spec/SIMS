@@ -1079,7 +1079,7 @@ function renderQuizPreview(){const el=document.getElementById('quizPreview');if(
 function startQuiz(){quizState.questions=shuffleArray(quizQuestionPool(quizState.difficulty)).slice(0,10);quizState.index=0;quizState.score=0;quizState.correct=0;quizState.answered=false;quizState.started=true;renderQuizQuestion();}
 function renderQuizQuestion(){
   const item=quizState.questions[quizState.index];if(!item){finishQuiz();return;}
-  quizState.currentOptions=makeQuizOptions(item.a);const letters=['A','B','C','D'];
+  quizState.currentOptions=makeQuizOptions(item);const letters=['A','B','C','D'];
   document.getElementById('quizContent').innerHTML=`<div class="quiz-top"><div><span class="badge">${quizDifficultyLabel(quizState.difficulty).toUpperCase()}</span><h2>Quiz Challenge</h2></div><div class="quiz-score">⭐ ${quizState.score}</div></div><div class="quiz-progress"><span>Question ${quizState.index+1} of ${quizState.questions.length}</span><div><i style="width:${(quizState.index/quizState.questions.length)*100}%"></i></div></div><div class="quiz-question-card"><p class="quiz-number">QUESTION ${quizState.index+1}</p><h3>${item.q}</h3><div class="quiz-options">${quizState.currentOptions.map((o,i)=>`<button class="quiz-option" data-value="${o.value}" onclick="answerQuiz('${o.value}',this)"><span>${o.value}</span><b>${o.label}</b></button>`).join('')}</div><div id="quizFeedback" class="quiz-feedback hidden"></div><button id="quizNext" class="primary hidden" onclick="nextQuizQuestion()">NEXT QUESTION →</button></div>`;
 }
 function answerQuiz(value,button){
