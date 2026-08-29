@@ -31,9 +31,19 @@
             "score": { ".validate": "newData.isNumber() && newData.val() >= 0" },
             "correct": { ".validate": "newData.isNumber() && newData.val() >= 0" },
             "attempts": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "bestStreak": { ".validate": "newData.isNumber() && newData.val() >= 0" },
             "completed": { ".validate": "newData.isBoolean()" },
             "joinedAt": { ".validate": true },
             "lastActivity": { ".validate": true },
+            "topics": {
+              // Per-topic accuracy (Weak Topics tracker). Fixed set of known topic keys.
+              "$topic": {
+                ".validate": "newData.hasChildren(['attempts','correct'])",
+                "attempts": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+                "correct": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+                "$other": { ".validate": false }
+              }
+            },
             "$other": { ".validate": false }
           }
         },

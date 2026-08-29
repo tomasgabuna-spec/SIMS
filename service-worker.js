@@ -3,7 +3,7 @@
 // those requests go straight to the network and simply fail gracefully
 // offline, same as they already do in script.js.
 
-const CACHE_VERSION = "sims-cache-v4";
+const CACHE_VERSION = "sims-cache-v7";
 
 // Everything needed to play SIMS fully offline (practice, missions,
 // word problems, time trial, progress/badges — all already localStorage-based).
